@@ -1,6 +1,6 @@
 package pt.leirt.mpd.products;
 
-public class SmartPhone extends BaseElectronics{
+public class SmartPhone extends BaseElectronics implements Screen{
 
     private final Resolution res;
     private final double screenSize;
@@ -18,10 +18,12 @@ public class SmartPhone extends BaseElectronics{
         return Category.COMMUNICATIONS;
     }
 
-    public Resolution getRes() {
+    @Override
+    public Resolution getResolution() {
         return res;
     }
 
+    @Override
     public double getScreenSize() {
         return screenSize;
     }

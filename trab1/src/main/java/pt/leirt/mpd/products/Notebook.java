@@ -1,6 +1,6 @@
 package pt.leirt.mpd.products;
 
-public class Notebook extends BaseElectronics {
+public class Notebook extends BaseElectronics implements Screen{
 
     private final Resolution resolution;
     private final double screenSize;
@@ -20,10 +20,12 @@ public class Notebook extends BaseElectronics {
         return Category.INFORMATICS;
     }
 
+    @Override
     public Resolution getResolution() {
         return resolution;
     }
 
+    @Override
     public double getScreenSize() {
         return screenSize;
     }

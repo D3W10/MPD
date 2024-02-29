@@ -3,7 +3,7 @@ package pt.leirt.mpd.products;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class TV extends BaseElectronics {
+public class TV extends BaseElectronics implements Screen{
     private final Resolution res;    // in pixels
     private final double screenSize; // in inches
 
@@ -23,13 +23,13 @@ public class TV extends BaseElectronics {
         return "Resolution: " + getResolution() + "\nScreen Size:" + getScreenSize();
     }
 
+    @Override
     public Resolution getResolution() {
         return res;
     }
 
+    @Override
     public double getScreenSize() {
         return screenSize;
     }
-
-
 }
