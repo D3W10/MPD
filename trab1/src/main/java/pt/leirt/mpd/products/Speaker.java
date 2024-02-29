@@ -16,6 +16,11 @@ public class Speaker extends BaseElectronics {
         return Category.AUDIO;
     }
 
+    @Override
+    public String toString() {
+        return "Power: " + getPower();
+    }
+
     public double getPower() {
         return power;
     }
