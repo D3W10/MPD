@@ -18,6 +18,11 @@ public class TV extends BaseElectronics {
         return Category.VIDEO;
     }
 
+    @Override
+    public String toString() {
+        return "Resolution: " + getResolution() + "\nScreen Size:" + getScreenSize();
+    }
+
     public Resolution getResolution() {
         return res;
     }
