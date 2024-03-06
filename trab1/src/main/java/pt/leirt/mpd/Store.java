@@ -36,8 +36,13 @@ public class Store {
     }
 
     public Iterable<TV> getAboveSizeTvs(double minInches) {
-        // TO IMPLEMENT
-        return null;
+        List<TV> bigTvs = new ArrayList<>();
+        for (var p : catalog){
+            if(p.getClass() == TV.class && ((TV) p).getScreenSize() > minInches) {
+                bigTvs.add((TV) p);
+            }
+        }
+        return bigTvs;
     }
 
     public Iterable<Speaker> getSpeakersInPowerInterval(int minPower, int maxPower) {
