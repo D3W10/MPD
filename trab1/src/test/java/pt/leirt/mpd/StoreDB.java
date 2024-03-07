@@ -22,8 +22,8 @@ public class StoreDB {
     public final static SmartPhone samsungS23 = new SmartPhone("Samsung", "s23", 1200, uhd, 6.5, 4500);
     
     // Packs
-    //public final static Pack packSamsung = new Pack("SamsungBrand", List.of(samsungU7,samsungS250,samsungS23 ));
-    //public final static Pack packTvs = new Pack("TVS", List.of(samsungU7, sonyX95 ));
+    public final static Pack packSamsung = new Pack("SamsungBrand", List.of(samsungU7,samsungS250,samsungS23 ));
+    public final static Pack packTvs = new Pack("TVS", List.of(samsungU7, sonyX95 ));
     
-    //public final static Pack packBig = new Pack("bigPack", List.of(iPhone15, packSamsung, jblX300,  packTvs));
+    public final static Pack packBig = new Pack("bigPack", List.of(iPhone15, packSamsung, jblX300,  packTvs));
 }
