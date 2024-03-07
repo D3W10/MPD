@@ -1,9 +1,15 @@
 package pt.leirt.mpd;
 
+import org.junit.jupiter.api.Test;
+import pt.leirt.mpd.products.Pack;
+
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static pt.leirt.mpd.TestUtils.count;
+import static pt.leirt.mpd.TestUtils.toList;
 
 public class PackTests {
-    /*
     @Test
     public void checkAttributtesOfPackSamsungTest() {
         var pack = StoreDB.packSamsung;
@@ -29,5 +35,4 @@ public class PackTests {
         assertEquals(expectedProductsCount, count(pack));
         assertEquals(expectedProducts, toList(pack));
     }
-    */
 }
