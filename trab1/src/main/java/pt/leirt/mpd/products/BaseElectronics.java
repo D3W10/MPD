@@ -1,6 +1,6 @@
 package pt.leirt.mpd.products;
 
-import org.json.JSONObject;
+import java.util.Objects;
 
 public abstract class BaseElectronics implements Electronics {
 
@@ -29,4 +29,11 @@ public abstract class BaseElectronics implements Electronics {
                 return s;
         }
 
+        @Override
+        public boolean equals(Object o) {
+                if (this == o) return true;
+                if (o == null || getClass() != o.getClass()) return false;
+                BaseElectronics that = (BaseElectronics) o;
+                return Double.compare(price, that.price) == 0 && Objects.equals(name, that.name) && Objects.equals(brand, that.brand);
+        }
 }

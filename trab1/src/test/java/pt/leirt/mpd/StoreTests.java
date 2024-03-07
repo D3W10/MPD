@@ -47,7 +47,7 @@ public class StoreTests {
 
     System.out.println(result);
     assertEquals(expected.size(), count(result));
-    assertEquals(expected.toString(), result.toString());
+    assertEquals(expected, result);
   }
 
   @Test
