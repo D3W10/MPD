@@ -9,13 +9,18 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 
 public class Store {
-    private Collection<Electronics> catalog = new ArrayList<>();
+
+    private Collection<Electronics> catalog = new TreeSet<>((o1, o2) -> {
+        int res = o1.getBrand().compareTo(o2.getBrand());
+        if (res == 0)
+            return o1.getName().compareTo(o2.getName());
+        else
+            return res;
+    });
 
     public Store addCatalog(Electronics product) {
         catalog.add(product);
