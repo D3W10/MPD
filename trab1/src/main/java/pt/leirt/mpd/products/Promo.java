@@ -2,22 +2,22 @@ package pt.leirt.mpd.products;
 
 public class Promo implements Electronics{
 
-    private final double discount;
+    private final int discount;
     private final Electronics product;
 
-    public Promo(Electronics product, double discount){
+    public Promo(Electronics product, int discount){
         this.discount = discount;
         this.product = product;
     }
 
     @Override
     public String getName() {
-        return product.getName();
+        return "Promo " + product.getName();
     }
 
     @Override
     public double getPrice() {
-        return product.getPrice() * discount;
+        return product.getPrice() - product.getPrice() * discount * 0.01;
     }
 
     @Override
@@ -30,7 +30,11 @@ public class Promo implements Electronics{
         return product.getBrand();
     }
 
-    public double getDiscount() {
+    public int getDiscount() {
         return discount;
+    }
+
+    public Electronics getWrapper(){
+        return product;
     }
 }
