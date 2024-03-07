@@ -1,8 +1,5 @@
 package pt.leirt.mpd.products;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 public class Speaker extends BaseElectronics {
     private final double power; // in Watts
 
