@@ -7,8 +7,7 @@ import pt.leirt.mpd.products.SmartPhone;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PromoTests {
-   
-    /*
+
     @Test
     public void checkCorrectPromoAttributesTest() {
         var promoSansung = new Promo(StoreDB.samsungS23, 20);
@@ -21,7 +20,6 @@ public class PromoTests {
         assertEquals(expectedCategory, promoSansung.getCategory());
         assertEquals(expectedPrice, promoSansung.getPrice());
         assertEquals(20, promoSansung.getDiscount());
-        assertEquals(SmartPhone.class, promoSansung.getWrapee().getClass());
+        assertEquals(SmartPhone.class, promoSansung.getWrapper().getClass());
     }
-     */
 }

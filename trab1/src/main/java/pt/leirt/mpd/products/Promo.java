@@ -5,7 +5,7 @@ public class Promo implements Electronics{
     private final double discount;
     private final Electronics product;
 
-    public Promo(double discount, Electronics product){
+    public Promo(Electronics product, double discount){
         this.discount = discount;
         this.product = product;
     }

@@ -18,8 +18,8 @@ public class StoreDB {
     public final static Speaker samsungS250 = new Speaker("s250", "Samsung", 200, 60);
     
     // SmartPhones
-    //public final static SmartPhone iPhone15 = new SmartPhone("Apple", "i15", 1300, uhd, 6, 4000);
-    //public final static SmartPhone samsungS23 = new SmartPhone("Samsung", "s23", 1200, uhd, 6.5, 4500);
+    public final static SmartPhone iPhone15 = new SmartPhone("Apple", "i15", 1300, uhd, 6, 4000);
+    public final static SmartPhone samsungS23 = new SmartPhone("Samsung", "s23", 1200, uhd, 6.5, 4500);
     
     // Packs
     //public final static Pack packSamsung = new Pack("SamsungBrand", List.of(samsungU7,samsungS250,samsungS23 ));
