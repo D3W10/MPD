@@ -7,7 +7,6 @@ import java.util.List;
 public class Pack implements Iterable<Electronics>, Electronics {
     private String name;
     private List<Electronics> products;
-    private Iterator<Electronics> iterator = null;
 
     public Pack(String name, List<Electronics> products) {
         this.name = name;
@@ -16,22 +15,18 @@ public class Pack implements Iterable<Electronics>, Electronics {
 
     @Override
     public Iterator<Electronics> iterator() {
-        if (iterator == null) {
-            List<Electronics> allProducts = new ArrayList<>();
+        List<Electronics> allProducts = new ArrayList<>();
 
-            products.forEach(product -> {
-                if (product instanceof Pack pack) {
+        products.forEach(product -> {
+            if (product instanceof Pack pack) {
+                for (Electronics electronics : pack)
+                    allProducts.add(electronics);
+            }
+            else
+                allProducts.add(product);
+        });
 
-                    for (Electronics electronics : pack)
-                        allProducts.add(electronics);
-                } else
-                    allProducts.add(product);
-            });
-
-            iterator = allProducts.iterator();
-        }
-
-        return iterator;
+        return allProducts.iterator();
     }
 
     @Override
