@@ -1,12 +1,12 @@
 package pt.leirt.mpd;
 
+import org.json.JSONObject;
 import pt.leirt.mpd.products.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.TreeSet;
-
 
 public class Store {
 
@@ -113,5 +113,13 @@ public class Store {
         }
 
         return promoProduct;
+    }
+
+    public JSONObject toJson() {
+        JSONObject jObj = new JSONObject();
+
+        jObj.put("catalog", catalog);
+
+        return jObj;
     }
 }
