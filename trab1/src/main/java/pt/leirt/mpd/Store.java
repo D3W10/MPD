@@ -76,11 +76,28 @@ public class Store {
 
     static class DisplaySummary {
         // TO Define , must include product name and brand and display characteristics
+        private final Screen displayItem;
+
+        public DisplaySummary(Screen displayItem){
+            this.displayItem = displayItem;
+        }
+
+        public String getSummary(){
+            return displayItem.toString() + " " + displayItem.getScreenSize() + " " + displayItem.getResolution();
+        }
     }
 
     public Iterable<DisplaySummary> getDisplaysSummary() {
-        // TO IMPLEMENT
-        return null;
+        List<DisplaySummary> displaySummaries = new ArrayList<>();
+
+        for (var p : catalog){
+            if (p instanceof Screen s) {
+                DisplaySummary ds = new DisplaySummary(s);
+                displaySummaries.add(ds);
+            }
+        }
+
+        return displaySummaries;
     }
 
     public SmartPhone getCheapestSmartPhoneWithBatteryGreaterThen(int minBatCapacity) {
