@@ -1,10 +1,5 @@
 package pt.leirt.mpd.products;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.io.BufferedWriter;
-
 /**
  * Defines the contract for a product
  */
