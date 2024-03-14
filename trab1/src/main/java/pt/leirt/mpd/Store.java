@@ -70,8 +70,18 @@ public class Store {
     }
 
     public Electronics getMostExpensiveIndividualProductInPacks() {
-        // TO IMPLEMENT
-        return null;
+        Electronics result = null;
+
+        for (var p : catalog) {
+            if (p instanceof Pack pack) {
+                for (var product : pack) {
+                    if (result == null || product.getPrice() > result.getPrice())
+                        result = product;
+                }
+            }
+        }
+
+        return result;
     }
 
     static class DisplaySummary {
