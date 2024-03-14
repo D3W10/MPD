@@ -7,15 +7,13 @@ import java.util.List;
 public class Pack implements Iterable<Electronics>, Electronics {
     private String name;
     private List<Electronics> products;
+    private List<Electronics> allProducts;
 
     public Pack(String name, List<Electronics> products) {
         this.name = name;
         this.products = products;
-    }
 
-    @Override
-    public Iterator<Electronics> iterator() {
-        List<Electronics> allProducts = new ArrayList<>();
+        allProducts = new ArrayList<>();
 
         products.forEach(product -> {
             if (product instanceof Pack pack) {
@@ -25,7 +23,10 @@ public class Pack implements Iterable<Electronics>, Electronics {
             else
                 allProducts.add(product);
         });
+    }
 
+    @Override
+    public Iterator<Electronics> iterator() {
         return allProducts.iterator();
     }
 
