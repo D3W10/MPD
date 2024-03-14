@@ -5,7 +5,7 @@ package pt.leirt.mpd.products;
  */
 public interface Electronics {
 
-    enum Category { AUDIO, VIDEO, INFORMATICS, COMMUNICATIONS }
+    enum Category { AUDIO, VIDEO, INFORMATICS, COMMUNICATIONS, PACK }
 
     String getName();               // get  product name
     double getPrice();              // get  product price

@@ -47,7 +47,7 @@ public class Pack implements Iterable<Electronics>, Electronics {
 
     @Override
     public Category getCategory() {
-        return null;
+        return Category.PACK;
     }
 
     @Override
