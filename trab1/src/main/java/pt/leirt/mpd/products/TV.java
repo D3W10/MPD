@@ -1,6 +1,5 @@
 package pt.leirt.mpd.products;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class TV extends BaseElectronics implements Screen{
@@ -16,6 +15,17 @@ public class TV extends BaseElectronics implements Screen{
     @Override
     public Category getCategory() {
         return Category.VIDEO;
+    }
+
+    @Override
+    public String toJson() {
+        JSONObject jObj = new JSONObject();
+
+        jObj.put("res", res.getJson());
+        jObj.put("screenSize", screenSize);
+        jObj.put("type", "TV");
+
+        return jObj.toString();
     }
 
     @Override

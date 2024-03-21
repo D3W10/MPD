@@ -1,5 +1,7 @@
 package pt.leirt.mpd.products;
 
+import org.json.JSONObject;
+
 public class Promo implements Electronics{
 
     private final int discount;
@@ -28,6 +30,17 @@ public class Promo implements Electronics{
     @Override
     public String getBrand() {
         return product.getBrand();
+    }
+
+    @Override
+    public String toJson() {
+        JSONObject jObj = new JSONObject();
+
+        jObj.put("discount", discount);
+        jObj.put("product", new JSONObject(product.toJson()));
+        jObj.put("type", "Promo");
+
+        return jObj.toString();
     }
 
     public int getDiscount() {

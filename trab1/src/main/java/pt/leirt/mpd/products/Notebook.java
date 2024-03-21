@@ -1,5 +1,7 @@
 package pt.leirt.mpd.products;
 
+import org.json.JSONObject;
+
 public class Notebook extends BaseElectronics implements Screen{
 
     private final Resolution resolution;
@@ -7,7 +9,7 @@ public class Notebook extends BaseElectronics implements Screen{
     private final int batteryCapacity;
     private final int usbPorts;
 
-    protected Notebook(String name, String brand, double price, Resolution resolution, double screenSize, int batteryCapacity, int usbPorts) {
+    public Notebook(String name, String brand, double price, Resolution resolution, double screenSize, int batteryCapacity, int usbPorts) {
         super(name, brand, price);
         this.resolution = resolution;
         this.screenSize = screenSize;
@@ -18,6 +20,19 @@ public class Notebook extends BaseElectronics implements Screen{
     @Override
     public Category getCategory() {
         return Category.INFORMATICS;
+    }
+
+    @Override
+    public String toJson() {
+        JSONObject jObj = new JSONObject();
+
+        jObj.put("resolution", resolution.getJson());
+        jObj.put("screenSize", screenSize);
+        jObj.put("batteryCapacity", batteryCapacity);
+        jObj.put("usbPorts", usbPorts);
+        jObj.put("type", "Notebook");
+
+        return jObj.toString();
     }
 
     @Override

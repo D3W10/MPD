@@ -1,5 +1,6 @@
 package pt.leirt.mpd;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import pt.leirt.mpd.products.*;
 
@@ -133,8 +134,12 @@ public class Store {
 
     public String toJson() {
         JSONObject jObj = new JSONObject();
+        JSONArray jArray = new JSONArray();
 
-        jObj.put("catalog", catalog);
+        for (Electronics electronic : catalog)
+            jArray.put(new JSONObject(electronic.toJson()));
+
+        jObj.put("catalog", jArray);
 
         return jObj.toString();
     }

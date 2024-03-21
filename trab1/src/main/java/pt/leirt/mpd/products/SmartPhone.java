@@ -1,5 +1,7 @@
 package pt.leirt.mpd.products;
 
+import org.json.JSONObject;
+
 public class SmartPhone extends BaseElectronics implements Screen{
 
     private final Resolution res;
@@ -16,6 +18,18 @@ public class SmartPhone extends BaseElectronics implements Screen{
     @Override
     public Category getCategory() {
         return Category.COMMUNICATIONS;
+    }
+
+    @Override
+    public String toJson() {
+        JSONObject jObj = new JSONObject();
+
+        jObj.put("res", res.getJson());
+        jObj.put("screenSize", screenSize);
+        jObj.put("batteryCapacity", batteryCapacity);
+        jObj.put("type", "SmartPhone");
+
+        return jObj.toString();
     }
 
     @Override

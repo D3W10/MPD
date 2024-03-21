@@ -1,5 +1,7 @@
 package pt.leirt.mpd.products;
 
+import org.json.JSONObject;
+
 public class Speaker extends BaseElectronics {
     private final double power; // in Watts
 
@@ -14,6 +16,16 @@ public class Speaker extends BaseElectronics {
     }
 
     @Override
+    public String toJson() {
+        JSONObject jObj = new JSONObject();
+
+        jObj.put("power", power);
+        jObj.put("type", "Speaker");
+
+        return jObj.toString();
+    }
+
+    @Override
     public String toString() {
         return "Power: " + getPower();
     }
@@ -21,5 +33,4 @@ public class Speaker extends BaseElectronics {
     public double getPower() {
         return power;
     }
-
 }

@@ -11,7 +11,7 @@ public class Resolution {
         this.width = width; this.height = height;
     }
 
-    public JSONObject getJson( ) {
+    public JSONObject getJson() {
         JSONObject json = new JSONObject();
         json.put("width", width);
         json.put("height", height);

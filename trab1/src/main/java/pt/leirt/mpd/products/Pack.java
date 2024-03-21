@@ -1,8 +1,12 @@
 package pt.leirt.mpd.products;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class Pack implements Iterable<Electronics>, Electronics {
     private String name;
@@ -52,6 +56,18 @@ public class Pack implements Iterable<Electronics>, Electronics {
 
     @Override
     public String getBrand() {
-        return null;
+        return "Pack";
+    }
+
+    @Override
+    public String toJson() {
+        JSONObject jObj = new JSONObject();
+        JSONArray array = new JSONArray();
+
+        jObj.put("name", name);
+        products.forEach(electronic -> array.put(new JSONObject(electronic.toJson())));
+        jObj.put("products", array);
+
+        return jObj.toString();
     }
 }
