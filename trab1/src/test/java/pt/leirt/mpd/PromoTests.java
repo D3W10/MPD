@@ -20,6 +20,6 @@ public class PromoTests {
         assertEquals(expectedCategory, promoSansung.getCategory());
         assertEquals(expectedPrice, promoSansung.getPrice());
         assertEquals(20, promoSansung.getDiscount());
-        assertEquals(SmartPhone.class, promoSansung.getWrapper().getClass());
+        assertEquals(SmartPhone.class, promoSansung.getWrappee().getClass());
     }
 }
