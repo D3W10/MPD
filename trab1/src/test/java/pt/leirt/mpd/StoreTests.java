@@ -81,6 +81,7 @@ public class StoreTests {
 
   @Test
   public void storeFromJson() {
-
+    String expected = "{\"catalog\":[{\"power\":70,\"type\":\"Speaker\"},{\"power\":40,\"type\":\"Speaker\"},{\"res\":{\"width\":1920,\"height\":1080},\"screenSize\":23,\"type\":\"TV\"},{\"usbPorts\":3,\"screenSize\":16,\"batteryCapacity\":1200,\"type\":\"Notebook\",\"resolution\":{\"width\":1920,\"height\":1080}},{\"power\":60,\"type\":\"Speaker\"},{\"res\":{\"width\":3840,\"height\":2160},\"screenSize\":65,\"type\":\"TV\"}]}";
+    store.fromJson(expected);
   }
 }

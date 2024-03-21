@@ -147,9 +147,10 @@ public class Store {
     public void fromJson(String json) {
         JSONObject jObj = new JSONObject(json);
 
-        for (var JSONObject : jObj.getJSONArray("catalog")) {
+        for (JSONObject eletronic : jObj.getJSONArray("catalog")) {
 
             //catalog.add()
+
         }
     }
 }
