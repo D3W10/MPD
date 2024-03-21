@@ -38,7 +38,6 @@ public class StoreTests {
 
   @Test
   public void productsFromSansungTests() {
-    store.fromJson("{\"catalog\":[{\"price\":100,\"name\":\"x300\",\"power\":40,\"category\":\"AUDIO\",\"brand\":\"JBL\"},{\"price\":200,\"name\":\"s250\",\"power\":60,\"category\":\"AUDIO\",\"brand\":\"Samsung\"},{\"screenSize\":65,\"price\":3000,\"name\":\"X95\",\"category\":\"VIDEO\",\"resolution\":{\"json\":{\"width\":3840,\"height\":2160}},\"brand\":\"Sony\"}]}");
     List<Electronics> expected =
         List.of(new Speaker("s250", "Samsung", 200, 60));
 
@@ -78,5 +77,10 @@ public class StoreTests {
                     .addCatalog(new Notebook("Surface", "Microsoft", 1000, new Resolution(1920, 1080), 16, 1200, 3));
 
     assertEquals(store.toJson(), "{\"catalog\":[{\"power\":70,\"type\":\"Speaker\"},{\"power\":40,\"type\":\"Speaker\"},{\"res\":{\"width\":1920,\"height\":1080},\"screenSize\":23,\"type\":\"TV\"},{\"usbPorts\":3,\"screenSize\":16,\"batteryCapacity\":1200,\"type\":\"Notebook\",\"resolution\":{\"width\":1920,\"height\":1080}},{\"power\":60,\"type\":\"Speaker\"},{\"res\":{\"width\":3840,\"height\":2160},\"screenSize\":65,\"type\":\"TV\"}]}");
+  }
+
+  @Test
+  public void storeFromJson() {
+
   }
 }
