@@ -22,7 +22,8 @@ public class StoreTests {
 
     store.addCatalog(new TV("X95", "Sony", 3000, uhd, 65.0))
         .addCatalog(new Speaker("x300", "JBL", 100, 40))
-        .addCatalog(new Speaker("s250", "Samsung", 200, 60));
+        .addCatalog(new Speaker("s250", "Samsung", 200, 60))
+        .addCatalog(StoreDB.jblCharge3);
 
   }
 
@@ -55,6 +56,18 @@ public class StoreTests {
     List<TV> expected = List.of(new TV("X95", "Sony", 3000, uhd, 65.0));
 
     Iterable<TV> result = store.getAboveSizeTvs(50) ;
+
+    System.out.println(result);
+
+    assertEquals(expected, result);
+  }
+
+  @Test
+  public void getSpeakersInPowerIntervalTest(){
+    List<Speaker> expected = List.of(new Speaker("s250", "Samsung", 200, 60),
+                                     new Speaker("Charge 3", "JBL", 160, 70));
+
+    Iterable<Speaker> result = store.getSpeakersInPowerInterval(50, 80);
 
     System.out.println(result);
 
