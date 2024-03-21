@@ -132,11 +132,20 @@ public class Store {
         return promoProduct;
     }
 
-    public JSONObject toJson() {
+    public String toJson() {
         JSONObject jObj = new JSONObject();
 
         jObj.put("catalog", catalog);
 
-        return jObj;
+        return jObj.toString();
+    }
+
+    public void fromJson(String json) {
+        JSONObject jObj = new JSONObject(json);
+
+        for (var JSONObject : jObj.getJSONArray("catalog")) {
+
+            //catalog.add()
+        }
     }
 }
