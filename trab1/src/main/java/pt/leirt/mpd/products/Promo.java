@@ -34,7 +34,7 @@ public class Promo implements Electronics{
         return discount;
     }
 
-    public Electronics getWrapper(){
+    public Electronics getWrappee(){
         return product;
     }
 }
