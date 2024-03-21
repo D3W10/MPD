@@ -3,10 +3,7 @@ package pt.leirt.mpd;
 import org.json.JSONObject;
 import pt.leirt.mpd.products.*;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.TreeSet;
+import java.util.*;
 
 public class Store {
 
@@ -54,6 +51,8 @@ public class Store {
             if (p instanceof Speaker s && s.getPower() > minPower && s.getPower() < maxPower)
                 speakers.add(s);
         }
+
+        speakers.sort(Comparator.comparingInt(o -> (int) o.getPower()));
 
         return speakers;
     }
