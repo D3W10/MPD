@@ -125,7 +125,7 @@ public class Store {
         List<Promo> promoProduct = new ArrayList<>();
 
         for (var p : catalog){
-            if (p instanceof Promo pTV && (pTV.getWrapper() instanceof TV && pTV.getDiscount() == 20))
+            if (p instanceof Promo pTV && (pTV.getWrappee() instanceof TV && pTV.getDiscount() == 20))
                 promoProduct.add(pTV);
         }
 
