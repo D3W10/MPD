@@ -16,6 +16,9 @@ public class StoreDB {
     // Speakers
     public final static Speaker jblX300 = new Speaker("x300", "JBL", 100, 40);
     public final static Speaker samsungS250 = new Speaker("s250", "Samsung", 200, 60);
+    public final static Speaker jblCharge1 = new Speaker("Charge 1", "JBL", 50, 20);
+    public final static Speaker jblCharge2 = new Speaker("Charge 2", "JBL", 60, 30);
+    public final static Speaker jblCharge3 = new Speaker("Charge 3", "JBL", 160, 70);
     
     // SmartPhones
     public final static SmartPhone iPhone15 = new SmartPhone("Apple", "i15", 1300, uhd, 6, 4000);
