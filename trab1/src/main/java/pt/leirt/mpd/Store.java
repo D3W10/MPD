@@ -144,13 +144,40 @@ public class Store {
         return jObj.toString();
     }
 
-    public void fromJson(String json) {
+    public JSONObject fromJson(String json) {
         JSONObject jObj = new JSONObject(json);
 
-        for (JSONObject eletronic : jObj.getJSONArray("catalog")) {
-
-            //catalog.add()
-
+        for (Object item : jObj.getJSONArray("catalog")) {
+            if (item instanceof JSONObject eletronic)
+                catalog.add(jsonToObject(eletronic));
         }
+
+        return jObj;
+    }
+
+    private Electronics jsonToObject(JSONObject jObj) {
+        return switch (jObj.getString("type")) {
+            case "Speaker" ->
+                    new Speaker(jObj.getString("name"), jObj.getString("brand"), jObj.getDouble("price"), jObj.getDouble("power"));
+            case "Notebook" ->
+                    new Notebook(jObj.getString("name"), jObj.getString("brand"), jObj.getDouble("price"), new Resolution(jObj.getJSONObject("resolution").getInt("width"), jObj.getJSONObject("resolution").getInt("height")), jObj.getDouble("screenSize"), jObj.getInt("batteryCapacity"), jObj.getInt("usbPorts"));
+            case "TV" ->
+                    new TV(jObj.getString("name"), jObj.getString("brand"), jObj.getDouble("price"), new Resolution(jObj.getJSONObject("resolution").getInt("width"), jObj.getJSONObject("resolution").getInt("height")), jObj.getDouble("screenSize"));
+            case "SmartPhone" ->
+                    new SmartPhone(jObj.getString("name"), jObj.getString("brand"), jObj.getDouble("price"), new Resolution(jObj.getJSONObject("resolution").getInt("width"), jObj.getJSONObject("resolution").getInt("height")), jObj.getDouble("screenSize"), jObj.getInt("batteryCapacity"));
+            case "Promo" ->
+                    new Promo(jsonToObject(jObj.getJSONObject("product")), jObj.getInt("discount"));
+            case "Pack" -> {
+                List<Electronics> le = new ArrayList<>();
+
+                for (Object item : jObj.getJSONArray("products")) {
+                    if (item instanceof JSONObject prod)
+                        le.add(jsonToObject(prod));
+                }
+
+                yield new Pack(jObj.getString("name"), le);
+            }
+            default -> null;
+        };
     }
 }

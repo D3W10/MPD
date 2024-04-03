@@ -17,7 +17,7 @@ public class Speaker extends BaseElectronics {
 
     @Override
     public String toJson() {
-        JSONObject jObj = new JSONObject();
+        JSONObject jObj = new JSONObject(super.toJson());
 
         jObj.put("power", power);
         jObj.put("type", "Speaker");

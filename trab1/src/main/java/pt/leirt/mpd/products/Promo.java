@@ -2,7 +2,7 @@ package pt.leirt.mpd.products;
 
 import org.json.JSONObject;
 
-public class Promo implements Electronics{
+public class Promo implements Electronics {
 
     private final int discount;
     private final Electronics product;

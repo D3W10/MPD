@@ -11,5 +11,5 @@ public interface Electronics {
     double getPrice();              // get  product price
     Category getCategory();         // get  product category
     String getBrand();              // get  product brand
-    String toJson();
+    String toJson();                // serialize product
 }

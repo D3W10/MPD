@@ -67,6 +67,7 @@ public class Pack implements Iterable<Electronics>, Electronics {
         jObj.put("name", name);
         products.forEach(electronic -> array.put(new JSONObject(electronic.toJson())));
         jObj.put("products", array);
+        jObj.put("type", "Pack");
 
         return jObj.toString();
     }

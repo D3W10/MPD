@@ -1,5 +1,7 @@
 package pt.leirt.mpd.products;
 
+import org.json.JSONObject;
+
 import java.util.Objects;
 
 public abstract class BaseElectronics implements Electronics {
@@ -35,6 +37,17 @@ public abstract class BaseElectronics implements Electronics {
     public String toString() {
         String s = String.format("%s %s: price %.2f euros", brand, name, price);
         return s;
+    }
+
+    @Override
+    public String toJson() {
+        JSONObject jObj = new JSONObject();
+
+        jObj.put("name", name);
+        jObj.put("brand", brand);
+        jObj.put("price", price);
+
+        return jObj.toString();
     }
 
     @Override

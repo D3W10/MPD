@@ -19,9 +19,9 @@ public class TV extends BaseElectronics implements Screen{
 
     @Override
     public String toJson() {
-        JSONObject jObj = new JSONObject();
+        JSONObject jObj = new JSONObject(super.toJson());
 
-        jObj.put("res", res.getJson());
+        jObj.put("resolution", res.getJson());
         jObj.put("screenSize", screenSize);
         jObj.put("type", "TV");
 

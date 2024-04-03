@@ -24,7 +24,7 @@ public class Notebook extends BaseElectronics implements Screen{
 
     @Override
     public String toJson() {
-        JSONObject jObj = new JSONObject();
+        JSONObject jObj = new JSONObject(super.toJson());
 
         jObj.put("resolution", resolution.getJson());
         jObj.put("screenSize", screenSize);
