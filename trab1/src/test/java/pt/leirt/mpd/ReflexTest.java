@@ -21,6 +21,6 @@ public class ReflexTest {
 
     @Test
     public void saveToFileTest() throws IOException, IllegalAccessException {
-        saveToFile(store, "output.json");
+        saveToFile(new TV("X95", "Sony", 3000, new Resolution(3840, 2160), 65.0), "output.json");
     }
 }
