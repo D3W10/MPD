@@ -17,14 +17,8 @@ public class ReflexUtils {
         }
     }
 
-    public static void saveToWriter(Object o, Writer w) throws IOException {
-        try(PrintWriter fw = new PrintWriter(new FileWriter("output.txt"))){
-            List<Field> objectFields = getAllFields(o.getClass());
-
-            for (var f : objectFields){
-                fw.printf("%s: %s", f.getName(), f);
-            }
-        }
+    public static void saveToWriter(Object o, Writer w) throws IOException, IllegalAccessException {
+        w.write(serializeObject(o).toString());
     }
 
     public static JSONObject serializeObject(Object obj) throws IllegalAccessException {
