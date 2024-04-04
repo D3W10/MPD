@@ -19,8 +19,12 @@ public class StoreTests {
     static {
         store.addCatalog(new TV("X95", "Sony", 3000, uhd, 65.0))
                 .addCatalog(new Speaker("x300", "JBL", 100, 40))
-                .addCatalog(new Speaker("s250", "Samsung", 200, 60))
-                .addCatalog(StoreDB.jblCharge3);
+                .addCatalog(StoreDB.samsungS250)
+                .addCatalog(StoreDB.jblCharge3)
+                .addCatalog(new SmartPhone("iPhone", "Apple", 1200, fullHd, 17, 1500))
+                .addCatalog(new Notebook("Surface", "Microsoft", 1000, hd, 16, 1200, 3))
+                .addCatalog(new Pack("Pack", List.of(new TV("X95", "Sony", 3000, uhd, 65.0), new Speaker("s250", "Samsung", 200, 60))))
+                .addCatalog(new Promo(StoreDB.jblCharge1, 50));
     }
 
     private static <T> long count(Iterable<T> src) {
@@ -38,9 +42,8 @@ public class StoreTests {
     }
 
     @Test
-    public void productsFromSansungTests() {
-        List<Electronics> expected =
-                List.of(new Speaker("s250", "Samsung", 200, 60));
+    public void productsFromSamsungTests() {
+        List<Electronics> expected = List.of(StoreDB.samsungS250);
 
         Iterable<Electronics> result = store.fromSamsung();
 
@@ -72,17 +75,12 @@ public class StoreTests {
 
     @Test
     public void storeToJson() {
-        store.addCatalog(new SmartPhone("iPhone", "Apple", 1200, fullHd, 17, 1500))
-                .addCatalog(new Notebook("Surface", "Microsoft", 1000, hd, 16, 1200, 3))
-                .addCatalog(new Pack("Pack", List.of(new TV("X95", "Sony", 3000, uhd, 65.0), new Speaker("s250", "Samsung", 200, 60))))
-                .addCatalog(new Promo(new Speaker("s250", "Samsung", 200, 60), 50));
-
-        assertEquals(store.toJson(), "{\"catalog\":[{\"screenSize\":17,\"price\":1200,\"name\":\"iPhone\",\"batteryCapacity\":1500,\"type\":\"SmartPhone\",\"brand\":\"Apple\",\"resolution\":{\"width\":1920,\"height\":1080}},{\"price\":160,\"name\":\"Charge 3\",\"power\":70,\"type\":\"Speaker\",\"brand\":\"JBL\"},{\"price\":100,\"name\":\"x300\",\"power\":40,\"type\":\"Speaker\",\"brand\":\"JBL\"},{\"usbPorts\":3,\"screenSize\":16,\"price\":1000,\"name\":\"Surface\",\"batteryCapacity\":1200,\"type\":\"Notebook\",\"brand\":\"Microsoft\",\"resolution\":{\"width\":1024,\"height\":768}},{\"name\":\"Pack\",\"type\":\"Pack\",\"products\":[{\"screenSize\":65,\"price\":3000,\"name\":\"X95\",\"type\":\"TV\",\"brand\":\"Sony\",\"resolution\":{\"width\":3840,\"height\":2160}},{\"price\":200,\"name\":\"s250\",\"power\":60,\"type\":\"Speaker\",\"brand\":\"Samsung\"}]},{\"product\":{\"price\":200,\"name\":\"s250\",\"power\":60,\"type\":\"Speaker\",\"brand\":\"Samsung\"},\"discount\":50,\"type\":\"Promo\"},{\"price\":200,\"name\":\"s250\",\"power\":60,\"type\":\"Speaker\",\"brand\":\"Samsung\"},{\"screenSize\":65,\"price\":3000,\"name\":\"X95\",\"type\":\"TV\",\"brand\":\"Sony\",\"resolution\":{\"width\":3840,\"height\":2160}}]}");
+        assertEquals(store.toJson(), "{\"catalog\":[{\"screenSize\":17,\"price\":1200,\"name\":\"iPhone\",\"batteryCapacity\":1500,\"type\":\"SmartPhone\",\"brand\":\"Apple\",\"resolution\":{\"width\":1920,\"height\":1080}},{\"price\":160,\"name\":\"Charge 3\",\"power\":70,\"type\":\"Speaker\",\"brand\":\"JBL\"},{\"product\":{\"price\":50,\"name\":\"Charge 1\",\"power\":20,\"type\":\"Speaker\",\"brand\":\"JBL\"},\"discount\":50,\"type\":\"Promo\"},{\"price\":100,\"name\":\"x300\",\"power\":40,\"type\":\"Speaker\",\"brand\":\"JBL\"},{\"usbPorts\":3,\"screenSize\":16,\"price\":1000,\"name\":\"Surface\",\"batteryCapacity\":1200,\"type\":\"Notebook\",\"brand\":\"Microsoft\",\"resolution\":{\"width\":1024,\"height\":768}},{\"name\":\"Pack\",\"type\":\"Pack\",\"products\":[{\"screenSize\":65,\"price\":3000,\"name\":\"X95\",\"type\":\"TV\",\"brand\":\"Sony\",\"resolution\":{\"width\":3840,\"height\":2160}},{\"price\":200,\"name\":\"s250\",\"power\":60,\"type\":\"Speaker\",\"brand\":\"Samsung\"}]},{\"price\":200,\"name\":\"s250\",\"power\":60,\"type\":\"Speaker\",\"brand\":\"Samsung\"},{\"screenSize\":65,\"price\":3000,\"name\":\"X95\",\"type\":\"TV\",\"brand\":\"Sony\",\"resolution\":{\"width\":3840,\"height\":2160}}]}");
     }
 
     @Test
     public void storeFromJson() {
-        String expected = "{\"catalog\":[{\"screenSize\":17,\"price\":1200,\"name\":\"iPhone\",\"batteryCapacity\":1500,\"type\":\"SmartPhone\",\"brand\":\"Apple\",\"resolution\":{\"width\":1920,\"height\":1080}},{\"price\":160,\"name\":\"Charge 3\",\"power\":70,\"type\":\"Speaker\",\"brand\":\"JBL\"},{\"price\":100,\"name\":\"x300\",\"power\":40,\"type\":\"Speaker\",\"brand\":\"JBL\"},{\"usbPorts\":3,\"screenSize\":16,\"price\":1000,\"name\":\"Surface\",\"batteryCapacity\":1200,\"type\":\"Notebook\",\"brand\":\"Microsoft\",\"resolution\":{\"width\":1024,\"height\":768}},{\"name\":\"Pack\",\"type\":\"Pack\",\"products\":[{\"screenSize\":65,\"price\":3000,\"name\":\"X95\",\"type\":\"TV\",\"brand\":\"Sony\",\"resolution\":{\"width\":3840,\"height\":2160}},{\"price\":200,\"name\":\"s250\",\"power\":60,\"type\":\"Speaker\",\"brand\":\"Samsung\"}]},{\"product\":{\"price\":200,\"name\":\"s250\",\"power\":60,\"type\":\"Speaker\",\"brand\":\"Samsung\"},\"discount\":50,\"type\":\"Promo\"},{\"price\":200,\"name\":\"s250\",\"power\":60,\"type\":\"Speaker\",\"brand\":\"Samsung\"},{\"screenSize\":65,\"price\":3000,\"name\":\"X95\",\"type\":\"TV\",\"brand\":\"Sony\",\"resolution\":{\"width\":3840,\"height\":2160}}]}";
+        String expected = "{\"catalog\":[{\"screenSize\":17,\"price\":1200,\"name\":\"iPhone\",\"batteryCapacity\":1500,\"type\":\"SmartPhone\",\"brand\":\"Apple\",\"resolution\":{\"width\":1920,\"height\":1080}},{\"price\":160,\"name\":\"Charge 3\",\"power\":70,\"type\":\"Speaker\",\"brand\":\"JBL\"},{\"product\":{\"price\":50,\"name\":\"Charge 1\",\"power\":20,\"type\":\"Speaker\",\"brand\":\"JBL\"},\"discount\":50,\"type\":\"Promo\"},{\"price\":100,\"name\":\"x300\",\"power\":40,\"type\":\"Speaker\",\"brand\":\"JBL\"},{\"usbPorts\":3,\"screenSize\":16,\"price\":1000,\"name\":\"Surface\",\"batteryCapacity\":1200,\"type\":\"Notebook\",\"brand\":\"Microsoft\",\"resolution\":{\"width\":1024,\"height\":768}},{\"name\":\"Pack\",\"type\":\"Pack\",\"products\":[{\"screenSize\":65,\"price\":3000,\"name\":\"X95\",\"type\":\"TV\",\"brand\":\"Sony\",\"resolution\":{\"width\":3840,\"height\":2160}},{\"price\":200,\"name\":\"s250\",\"power\":60,\"type\":\"Speaker\",\"brand\":\"Samsung\"}]},{\"price\":200,\"name\":\"s250\",\"power\":60,\"type\":\"Speaker\",\"brand\":\"Samsung\"},{\"screenSize\":65,\"price\":3000,\"name\":\"X95\",\"type\":\"TV\",\"brand\":\"Sony\",\"resolution\":{\"width\":3840,\"height\":2160}}]}";
         store.fromJson(expected);
     }
 }
