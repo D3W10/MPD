@@ -1,14 +1,13 @@
 package pt.leirt.mpd;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import pt.leirt.mpd.products.Internal;
 import pt.leirt.mpd.products.JsonName;
 
 import java.io.*;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class ReflexUtils {
     public static void saveToFile(Object o, String fileName) throws IOException, IllegalAccessException {
@@ -31,10 +30,20 @@ public class ReflexUtils {
             if (!field.isAnnotationPresent(Internal.class)) {
                 Object value = field.get(obj);
 
-                if (value != null && !isPrimitiveType(value.getClass()))
-                    jObj.put(field.isAnnotationPresent(JsonName.class) ? field.getAnnotation(JsonName.class).name() : field.getName(), serializeObject(value));
-                else
-                    jObj.put(field.isAnnotationPresent(JsonName.class) ? field.getAnnotation(JsonName.class).name() : field.getName(), value);
+                if (value != null) {
+                    if (isPrimitiveType(value.getClass()))
+                        jObj.put(field.isAnnotationPresent(JsonName.class) ? field.getAnnotation(JsonName.class).name() : field.getName(), value);
+                    else if (value instanceof Collection<?> col) {
+                        JSONArray jArr = new JSONArray();
+
+                        for (Object o : col)
+                            jArr.put(serializeObject(o));
+
+                        jObj.put(field.isAnnotationPresent(JsonName.class) ? field.getAnnotation(JsonName.class).name() : field.getName(), jArr);
+                    }
+                    else
+                        jObj.put(field.isAnnotationPresent(JsonName.class) ? field.getAnnotation(JsonName.class).name() : field.getName(), serializeObject(value));
+                }
             }
         }
 

@@ -8,7 +8,7 @@ import java.util.*;
 
 public class Store {
 
-    private Collection<Electronics> catalog = new TreeSet<>((o1, o2) -> {
+    private final Collection<Electronics> catalog = new TreeSet<>((o1, o2) -> {
         int res = o1.getBrand().compareTo(o2.getBrand());
         if (res == 0)
             return o1.getName().compareTo(o2.getName());
@@ -85,7 +85,6 @@ public class Store {
     }
 
     static class DisplaySummary {
-        // TO Define , must include product name and brand and display characteristics
         private final Screen displayItem;
 
         public DisplaySummary(Screen displayItem){
@@ -142,6 +141,10 @@ public class Store {
         jObj.put("catalog", jArray);
 
         return jObj.toString();
+    }
+
+    public String toJsonImproved() throws IllegalAccessException {
+        return ReflexUtils.serializeObject(this).toString();
     }
 
     public JSONObject fromJson(String json) {
