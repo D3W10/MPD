@@ -3,7 +3,7 @@ package pt.leirt.mpd.products;
 import org.json.JSONObject;
 
 public class SmartPhone extends BaseElectronics implements Screen{
-
+    @JsonName(name = "resolution")
     private final Resolution res;
     private final double screenSize;
     private final int batteryCapacity;

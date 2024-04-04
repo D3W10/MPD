@@ -7,10 +7,8 @@ import java.io.IOException;
 import static pt.leirt.mpd.ReflexUtils.saveToFile;
 
 public class ReflexTest {
-
     @Test
-    public void saveToFileTest() throws IOException, IllegalAccessException, NoSuchFieldException {
+    public void saveToFileTest() throws IOException, IllegalAccessException {
         saveToFile(StoreDB.iPhone15, "output.json");
     }
-
 }

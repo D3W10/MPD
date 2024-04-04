@@ -2,7 +2,8 @@ package pt.leirt.mpd.products;
 
 import org.json.JSONObject;
 
-public class TV extends BaseElectronics implements Screen{
+public class TV extends BaseElectronics implements Screen {
+    @JsonName(name = "resolution")
     private final Resolution res;    // in pixels
     private final double screenSize; // in inches
 

@@ -11,6 +11,7 @@ import java.util.function.Consumer;
 public class Pack implements Iterable<Electronics>, Electronics {
     private String name;
     private List<Electronics> products;
+    @Internal
     private List<Electronics> allProducts;
 
     public Pack(String name, List<Electronics> products) {

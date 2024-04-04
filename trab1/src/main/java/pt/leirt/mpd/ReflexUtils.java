@@ -1,6 +1,8 @@
 package pt.leirt.mpd;
 
 import org.json.JSONObject;
+import pt.leirt.mpd.products.Internal;
+import pt.leirt.mpd.products.JsonName;
 
 import java.io.*;
 import java.lang.reflect.Field;
@@ -15,7 +17,10 @@ public class ReflexUtils {
 
         for (var f : objectFields){
             f.setAccessible(true);
-            objectJson.put(f.getName(), f.get(o));
+
+            if (!f.isAnnotationPresent(Internal.class))
+                objectJson.put(f.isAnnotationPresent(JsonName.class) ? f.getAnnotation(JsonName.class).name() : f.getName(), f.get(o));
+
         }
 
         try(BufferedWriter bw = new BufferedWriter(new FileWriter(fileName))){
