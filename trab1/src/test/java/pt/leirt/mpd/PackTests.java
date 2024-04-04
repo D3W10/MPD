@@ -35,4 +35,15 @@ public class PackTests {
         assertEquals(expectedProductsCount, count(pack));
         assertEquals(expectedProducts, toList(pack));
     }
+
+    @Test
+    public void checkAttributesOfBigPackTest() {
+        var pack = StoreDB.packBig;
+        var expectedProducts = List.of(StoreDB.iPhone15, StoreDB.samsungU7, StoreDB.samsungS250, StoreDB.samsungS23, StoreDB.jblX300, StoreDB.samsungU7, StoreDB.sonyX95);
+
+        var expectedProductsCount = 7;
+
+        assertEquals(expectedProductsCount, count(pack));
+        assertEquals(expectedProducts, toList(pack));
+    }
 }
