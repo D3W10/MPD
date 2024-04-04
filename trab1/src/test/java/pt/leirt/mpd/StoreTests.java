@@ -3,8 +3,6 @@ package pt.leirt.mpd;
 import org.junit.jupiter.api.Test;
 import pt.leirt.mpd.products.*;
 
-import java.io.IOException;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +22,9 @@ public class StoreTests {
                 .addCatalog(new SmartPhone("iPhone", "Apple", 1200, fullHd, 17, 1500))
                 .addCatalog(new Notebook("Surface", "Microsoft", 1000, hd, 16, 1200, 3))
                 .addCatalog(new Pack("Pack", List.of(new TV("X95", "Sony", 3000, uhd, 65.0), new Speaker("s250", "Samsung", 200, 60))))
-                .addCatalog(new Promo(StoreDB.jblCharge1, 50));
+                .addCatalog(new Promo(StoreDB.jblCharge1, 50))
+                .addCatalog(new Promo(StoreDB.lgOLED, 20))
+                .addCatalog(new Promo(StoreDB.lgNanoCell, 20));
     }
 
     private static <T> long count(Iterable<T> src) {
@@ -34,11 +34,6 @@ public class StoreTests {
             c++;
 
         return c;
-    }
-
-    @Test
-    public void getCatalogInJson() throws IOException {
-        // To complete
     }
 
     @Test
@@ -71,6 +66,54 @@ public class StoreTests {
         System.out.println(result);
 
         assertEquals(expected, result);
+    }
+
+    @Test
+    public void getMostExpensiveCommunicationDeviceTest() {
+        Electronics expected = new SmartPhone("iPhone", "Apple", 1200, fullHd, 17, 1500);
+        Electronics result = store.getMostExpensiveCommunicationDevice();
+
+        System.out.println(result);
+
+        assertEquals(expected, result);
+    }
+
+    @Test
+    public void getMostExpensiveIndividualProductInPacksTest() {
+        Electronics expected = new TV("X95", "Sony", 3000, uhd, 65.0);
+        Electronics result = store.getMostExpensiveIndividualProductInPacks();
+
+        System.out.println(result);
+
+        assertEquals(expected, result);
+    }
+
+    //TODO: rever o método
+    @Test
+    public void getDisplaysSummaryTest() {
+        System.out.println(store.getDisplaysSummary());
+    }
+
+    @Test
+    public void getCheapestSmartPhoneWithBatteryGreaterThenTest() {
+        SmartPhone expected = new SmartPhone("iPhone", "Apple", 1200, fullHd, 17, 1500);
+        SmartPhone result = store.getCheapestSmartPhoneWithBatteryGreaterThen(1000);
+
+        System.out.println(result);
+
+        assertEquals(expected, result);
+    }
+
+    //TODO: rever método
+    @Test
+    public void getPromoTVsWith20PercentDiscountTest() {
+        List<Promo> expected = List.of(new Promo(StoreDB.lgOLED, 20), new Promo(StoreDB.lgNanoCell, 20));
+        int i = 0;
+
+        for(var p : store.getPromoTVsWith20PercentDiscount()){
+            assertEquals(expected.get(i), p);
+            i++;
+        }
     }
 
     @Test
