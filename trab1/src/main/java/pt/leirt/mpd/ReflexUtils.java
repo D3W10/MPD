@@ -12,19 +12,8 @@ import java.util.List;
 
 public class ReflexUtils {
     public static void saveToFile(Object o, String fileName) throws IOException, IllegalAccessException {
-        JSONObject objectJson = new JSONObject();
-        List<Field> objectFields = getAllFields(o.getClass());
-
-        for (var f : objectFields){
-            f.setAccessible(true);
-
-            if (!f.isAnnotationPresent(Internal.class))
-                objectJson.put(f.isAnnotationPresent(JsonName.class) ? f.getAnnotation(JsonName.class).name() : f.getName(), f.get(o));
-
-        }
-
-        try(BufferedWriter bw = new BufferedWriter(new FileWriter(fileName))){
-            bw.write(objectJson.toString());
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(fileName))){
+            bw.write(serializeObject(o).toString());
         }
     }
 
@@ -36,6 +25,26 @@ public class ReflexUtils {
                 fw.printf("%s: %s", f.getName(), f);
             }
         }
+    }
+
+    public static JSONObject serializeObject(Object obj) throws IllegalAccessException {
+        JSONObject jObj = new JSONObject();
+        List<Field> fields = getAllFields(obj.getClass());
+
+        for (Field field : fields) {
+            field.setAccessible(true);
+
+            if (!field.isAnnotationPresent(Internal.class)) {
+                Object value = field.get(obj);
+
+                if (value != null && !value.getClass().isPrimitive())
+                    jObj.put(field.isAnnotationPresent(JsonName.class) ? field.getAnnotation(JsonName.class).name() : field.getName(), serializeObject(value));
+                else
+                    jObj.put(field.isAnnotationPresent(JsonName.class) ? field.getAnnotation(JsonName.class).name() : field.getName(), value);
+            }
+        }
+
+        return jObj;
     }
 
     public static List<Field> getAllFields(Class<?> cls) {
