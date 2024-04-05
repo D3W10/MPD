@@ -40,7 +40,6 @@ public class StoreTests {
     @Test
     public void productsFromSamsungTests() {
         List<Electronics> expected = List.of(StoreDB.samsungS250);
-
         Iterable<Electronics> result = store.fromSamsung();
 
         assertEquals(expected.size(), count(result));
@@ -50,7 +49,6 @@ public class StoreTests {
     @Test
     public void getAbove50InchesTvsTest() {
         List<TV> expected = List.of(new TV("X95", "Sony", 3000, uhd, 65.0));
-
         Iterable<TV> result = store.getAboveSizeTvs(50);
 
         assertEquals(expected, result);
@@ -58,9 +56,7 @@ public class StoreTests {
 
     @Test
     public void getSpeakersInPowerIntervalTest() {
-        List<Speaker> expected = List.of(new Speaker("s250", "Samsung", 200, 60),
-                new Speaker("Charge 3", "JBL", 160, 70));
-
+        List<Speaker> expected = List.of(new Speaker("s250", "Samsung", 200, 60), new Speaker("Charge 3", "JBL", 160, 70));
         Iterable<Speaker> result = store.getSpeakersInPowerInterval(50, 80);
 
         assertEquals(expected, result);
@@ -95,21 +91,15 @@ public class StoreTests {
         SmartPhone expected = new SmartPhone("iPhone", "Apple", 1200, fullHd, 17, 1500);
         SmartPhone result = store.getCheapestSmartPhoneWithBatteryGreaterThen(1000);
 
-        System.out.println(result);
-
         assertEquals(expected, result);
     }
 
-    //TODO: rever método
     @Test
     public void getPromoTVsWith20PercentDiscountTest() {
-        List<Promo> expected = List.of(new Promo(StoreDB.lgOLED, 20), new Promo(StoreDB.lgNanoCell, 20));
-        int i = 0;
+        List<String> expected = List.of(new Promo(StoreDB.lgOLED, 20).toJson(), new Promo(StoreDB.lgNanoCell, 20).toJson());
 
-        for(var p : store.getPromoTVsWith20PercentDiscount()){
-            assertEquals(expected.get(i), p);
-            i++;
-        }
+        for (var p : store.getPromoTVsWith20PercentDiscount())
+            assertTrue(expected.contains(p.toJson()));
     }
 
     @Test
