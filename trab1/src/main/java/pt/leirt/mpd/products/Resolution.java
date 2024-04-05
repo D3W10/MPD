@@ -1,6 +1,5 @@
 package pt.leirt.mpd.products;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class Resolution {
@@ -16,5 +15,10 @@ public class Resolution {
         json.put("width", width);
         json.put("height", height);
         return json;
+    }
+
+    @Override
+    public String toString() {
+        return "Resolution: { Height: " + height + ", Width: " + width + "}";
     }
 }
