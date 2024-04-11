@@ -12,3 +12,5 @@ plugins {
 
 rootProject.name = '2024_template'
 include('trab1')
+include('music-all-streams')
+include('music-all-utils')
