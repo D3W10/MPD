@@ -21,15 +21,26 @@ public interface PipeIterable<T> extends Iterable<T> {
     
     
     static <T> PipeIterable<T> iterate(T seed, Function<T, T> next){
-        return () -> new IteratorGenerate<T>(() -> next.apply(seed));
+        return () -> {
+            var ref = new Object() {
+                T elm = seed;
+            };
+
+            return new IteratorGenerate<>(() -> {
+                T old = ref.elm;
+                ref.elm = next.apply(ref.elm);
+                return old;
+            });
+        };
     }
     
+    @SafeVarargs
     static <T> PipeIterable<T> of(T... elems) {
         return () -> new IteratorArray<>(elems);
     }
     
     static <T> PipeIterable<T> of(Iterable<T> items) {
-        return () -> items.iterator();
+        return items::iterator;
     }
     
     static PipeIterable<Integer> range(int min, int max) {
@@ -69,7 +80,7 @@ public interface PipeIterable<T> extends Iterable<T> {
         return () ->
             new Iterator<T>() {
                 Optional<T> curr = Optional.empty();
-                Iterator<T> srcIt = iterator();
+                final Iterator<T> srcIt = iterator();
                 boolean done;
                 
                 @Override
