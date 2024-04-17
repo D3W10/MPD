@@ -78,7 +78,7 @@ public interface PipeIterable<T> extends Iterable<T> {
     
     default PipeIterable<T> takeWhile(Predicate<T> pred){
         return () ->
-            new Iterator<T>() {
+            new Iterator<>() {
                 Optional<T> curr = Optional.empty();
                 final Iterator<T> srcIt = iterator();
                 boolean done;
@@ -108,8 +108,13 @@ public interface PipeIterable<T> extends Iterable<T> {
     }
     
     default PipeIterable<T> skipWhile(Predicate<T> pred) {
-        TODO("skipWhile");
-        return null;
+        return () -> {
+            Iterator<T> it = iterator();
+
+            while(it.hasNext() && pred.test(it.next())) {}
+
+            return it;
+        };
     }
     
     default  PipeIterable<T> skip( int nr)
@@ -201,7 +206,10 @@ public interface PipeIterable<T> extends Iterable<T> {
     }
     
     default Optional<T> last() {
-        TODO("last");
-        return null;
+        T lastElement = null;
+
+        for (T t : this) lastElement = t;
+
+        return Optional.ofNullable(lastElement);
     }
 }

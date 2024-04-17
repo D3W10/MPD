@@ -62,7 +62,14 @@ public class PipeIterableTests {
         var expected = List.of(2,4,6,8,10,12,14,16,18,20);
         assertEquals(expected, nrs.toList());
     }
-    
+
+    @Test
+    public void testSkipWhile(){
+        List<Integer> nrs = List.of(1, 2, 3, 4, 5, 6, 7, 8);
+        List<Integer> actual = of(nrs).skipWhile((e) -> e < 4).toList();
+        var expected = List.of(5, 6, 7, 8);
+        assertEquals(expected, actual);
+    }
     
     @Test
     public void testSkip(){
