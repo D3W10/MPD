@@ -126,8 +126,26 @@ public interface PipeIterable<T> extends Iterable<T> {
     }
     
     default PipeIterable<T> limit(int nr){
-        TODO("limit");
-        return null;
+        return () ->
+            new Iterator<>() {
+                private int curr = 0;
+                private final int limit = nr;
+                private final Iterator<T> srcIt = iterator();
+
+                @Override
+                public boolean hasNext() {
+                    return curr < limit;
+                }
+
+                @Override
+                public T next() {
+                    if (!hasNext())
+                        throw new NoSuchElementException();
+
+                    curr++;
+                    return srcIt.next();
+                }
+        };
     }
     
     default PipeIterable<T> cache() {
