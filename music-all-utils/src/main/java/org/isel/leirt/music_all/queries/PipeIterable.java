@@ -21,8 +21,7 @@ public interface PipeIterable<T> extends Iterable<T> {
     
     
     static <T> PipeIterable<T> iterate(T seed, Function<T, T> next){
-        TODO("iterate");
-        return null;
+        return () -> new IteratorGenerate<T>(() -> next.apply(seed));
     }
     
     static <T> PipeIterable<T> of(T... elems) {
