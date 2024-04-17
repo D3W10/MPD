@@ -154,8 +154,22 @@ public interface PipeIterable<T> extends Iterable<T> {
     }
     
     default PipeIterable<T> cache() {
-        TODO("cache");
-        return null;
+        return () -> {
+            Supplier<Iterator<T>> sourceIterator = this::iterator;
+            Iterator<T> cachedIterator = sourceIterator.get();
+
+            return new Iterator<>() {
+                @Override
+                public boolean hasNext() {
+                    return cachedIterator.hasNext();
+                }
+
+                @Override
+                public T next() {
+                    return cachedIterator.next();
+                }
+            };
+        };
     }
     
     // terminal operations
