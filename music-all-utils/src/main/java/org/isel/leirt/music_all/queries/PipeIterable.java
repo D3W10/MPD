@@ -134,12 +134,11 @@ public interface PipeIterable<T> extends Iterable<T> {
         return () ->
             new Iterator<>() {
                 private int curr = 0;
-                private final int limit = nr;
                 private final Iterator<T> srcIt = iterator();
 
                 @Override
                 public boolean hasNext() {
-                    return curr < limit;
+                    return curr < nr && srcIt.hasNext();
                 }
 
                 @Override
@@ -150,9 +149,9 @@ public interface PipeIterable<T> extends Iterable<T> {
                     curr++;
                     return srcIt.next();
                 }
-        };
+            };
     }
-    
+
     default PipeIterable<T> cache() {
         Iterator<T> it = iterator();
         List<T> cachedValues = new ArrayList<>();
