@@ -165,9 +165,19 @@ public class PipeIterableTests {
         nrs = nrs.cache();
         
         var nrs1 = nrs.limit(10);
-        
         var expected = nrs.limit(10).toList();
         var actual = nrs.limit(10).toList();
+
+        assertEquals(nrs1.toList(), expected);
+        assertEquals(expected, actual);
+
+        PipeIterable<Integer> nrsGen = iterate(0, n -> n + 1);
+        nrsGen = nrsGen.cache();
+        nrsGen.limit(20);
+
+        expected = nrsGen.limit(5).toList();
+        actual = nrsGen.limit(5).toList();
+
         assertEquals(expected, actual);
     }
     
