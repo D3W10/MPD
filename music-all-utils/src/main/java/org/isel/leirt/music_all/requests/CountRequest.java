@@ -2,22 +2,22 @@ package org.isel.leirt.music_all.requests;
 
 import java.io.Reader;
 
-import static org.isel.leirt.music_all.Errors.TODO;
-
 public class CountRequest implements Request {
-   
+    private final Request request;
+    private int count;
+
     public CountRequest(Request req) {
-        TODO("CountRequest");
+        this.request = req;
+        this.count = 0;
     }
 
     @Override
     public Reader get(String path) {
-        TODO("CountRequest.get");
-        return null;
+        count++;
+        return request.get(path);
     }
 
     public int getCount() {
-        TODO("CountRequest.getCount");
-        return 0;
+        return count;
     }
 }

@@ -1,21 +1,18 @@
 package org.isel.leirt.music_all.requests;
 
-import org.isel.leirt.music_all.requests.MockRequest;
-import org.isel.leirt.music_all.requests.Request;
-
-import java.io.*;
-
-import static org.isel.leirt.music_all.Errors.TODO;
+import java.io.Reader;
 
 public class SaverRequest implements Request {
-    
+    private final Request request;
+
     public SaverRequest(HttpRequest req) {
-       TODO("SaverRequest");
+        this.request = req;
     }
     
     @Override
     public Reader get(String path) {
-        TODO("SaverRequest.get");
-        return null;
+        Reader response = request.get(path);
+        MockRequest.saveOn(path, response);
+        return response;
     }
 }

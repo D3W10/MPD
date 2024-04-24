@@ -5,7 +5,6 @@ import com.google.gson.Gson;
 import org.isel.leirt.music_all.requests.Request;
 import org.isel.music_all.streams.dto.*;
 
-
 import java.io.*;
 import java.net.URL;
 import java.util.List;
@@ -69,8 +68,7 @@ public class LastFmWebApi {
         try(Reader reader= request.get(path)) {
             SearchArtistDto searchResult = gson.fromJson(reader, SearchArtistDto.class);
             
-            return searchResult.getResults().getArtistMatches();
-            
+            return searchResult.getResults().getArtistMatches().stream().filter(artistDto -> artistDto.getMbid() != null && !artistDto.getMbid().isEmpty()).toList();
         }
         catch(IOException e) {
             throw new UncheckedIOException(e);
@@ -97,7 +95,7 @@ public class LastFmWebApi {
         
         try(Reader reader= request.get(path)) {
             GetAlbumsDto albums = gson.fromJson(reader, GetAlbumsDto.class);
-            return  albums.getAlbums();
+            return  albums.getAlbums().stream().filter(album -> album.getMbid() != null && !album.getMbid().isEmpty()).toList();
         }
         catch(IOException e) {
             throw new UncheckedIOException(e);
