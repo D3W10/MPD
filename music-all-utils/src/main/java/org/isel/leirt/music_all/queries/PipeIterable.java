@@ -162,7 +162,7 @@ public interface PipeIterable<T> extends Iterable<T> {
 
                 @Override
                 public boolean hasNext() {
-                    return it.hasNext();
+                    return count < cachedValues.size() || it.hasNext();
                 }
 
                 @Override

@@ -220,6 +220,4 @@ public class PipeIterableTests {
         assertTrue(m.isPresent());
         assertEquals(lst.get(lst.size()-1), m.get());
     }
-    
-  
 }
