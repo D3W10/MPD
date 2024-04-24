@@ -21,16 +21,26 @@ public interface PipeIterable<T> extends Iterable<T> {
     
     
     static <T> PipeIterable<T> iterate(T seed, Function<T, T> next){
-        TODO("iterate");
-        return null;
+        return () -> {
+            var ref = new Object() {
+                T elm = seed;
+            };
+
+            return new IteratorGenerate<>(() -> {
+                T old = ref.elm;
+                ref.elm = next.apply(ref.elm);
+                return old;
+            });
+        };
     }
     
+    @SafeVarargs
     static <T> PipeIterable<T> of(T... elems) {
         return () -> new IteratorArray<>(elems);
     }
     
     static <T> PipeIterable<T> of(Iterable<T> items) {
-        return () -> items.iterator();
+        return items::iterator;
     }
     
     static PipeIterable<Integer> range(int min, int max) {
@@ -68,9 +78,9 @@ public interface PipeIterable<T> extends Iterable<T> {
     
     default PipeIterable<T> takeWhile(Predicate<T> pred){
         return () ->
-            new Iterator<T>() {
+            new Iterator<>() {
                 Optional<T> curr = Optional.empty();
-                Iterator<T> srcIt = iterator();
+                final Iterator<T> srcIt = iterator();
                 boolean done;
                 
                 @Override
@@ -98,8 +108,13 @@ public interface PipeIterable<T> extends Iterable<T> {
     }
     
     default PipeIterable<T> skipWhile(Predicate<T> pred) {
-        TODO("skipWhile");
-        return null;
+        return () -> {
+            Iterator<T> it = iterator();
+
+            while(it.hasNext() && pred.test(it.next())) {}
+
+            return it;
+        };
     }
     
     default  PipeIterable<T> skip( int nr)
@@ -116,13 +131,48 @@ public interface PipeIterable<T> extends Iterable<T> {
     }
     
     default PipeIterable<T> limit(int nr){
-        TODO("limit");
-        return null;
+        return () ->
+            new Iterator<>() {
+                private int curr = 0;
+                private final Iterator<T> srcIt = iterator();
+
+                @Override
+                public boolean hasNext() {
+                    return curr < nr && srcIt.hasNext();
+                }
+
+                @Override
+                public T next() {
+                    if (!hasNext())
+                        throw new NoSuchElementException();
+
+                    curr++;
+                    return srcIt.next();
+                }
+            };
     }
-    
+
     default PipeIterable<T> cache() {
-        TODO("cache");
-        return null;
+        Iterator<T> it = iterator();
+        List<T> cachedValues = new ArrayList<>();
+
+        return () ->
+            new Iterator<>() {
+                private int count = 0;
+
+                @Override
+                public boolean hasNext() {
+                    return it.hasNext();
+                }
+
+                @Override
+                public T next() {
+                    if (count++ >= cachedValues.size())
+                        cachedValues.add(it.next());
+
+                    return cachedValues.get(count - 1);
+                }
+            };
     }
     
     // terminal operations
@@ -173,7 +223,10 @@ public interface PipeIterable<T> extends Iterable<T> {
     }
     
     default Optional<T> last() {
-        TODO("last");
-        return null;
+        T lastElement = null;
+
+        for (T t : this) lastElement = t;
+
+        return Optional.ofNullable(lastElement);
     }
 }

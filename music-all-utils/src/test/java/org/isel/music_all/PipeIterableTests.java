@@ -34,16 +34,15 @@ package org.isel.music_all;
 import org.isel.leirt.music_all.queries.PipeIterable;
 import org.junit.jupiter.api.Test;
 
-import static java.util.stream.Collectors.toList;
-import static org.isel.leirt.music_all.queries.PipeIterable.*;
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.Random;
 import java.util.function.Supplier;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import static java.lang.System.out;
+import static org.isel.leirt.music_all.queries.PipeIterable.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class PipeIterableTests {
@@ -62,7 +61,29 @@ public class PipeIterableTests {
         var expected = List.of(2,4,6,8,10,12,14,16,18,20);
         assertEquals(expected, nrs.toList());
     }
-    
+
+    @Test
+    public void testIterate() {
+        var i1 = iterate(0, n -> n + 3).limit(5);
+        var exp = List.of(0, 3, 6, 9, 12);
+        assertEquals(exp, i1.toList());
+
+        var i2 = iterate(0, n -> n / 2).limit(5);
+        exp = List.of(0, 0, 0, 0, 0);
+        assertEquals(exp, i2.toList());
+
+        var i3 = iterate(2, n -> (int) Math.pow(n, 2)).limit(5);
+        exp = List.of(2, 4, 16, 256, 65536);
+        assertEquals(exp, i3.toList());
+    }
+
+    @Test
+    public void testSkipWhile(){
+        List<Integer> nrs = List.of(1, 2, 3, 4, 5, 6, 7, 8);
+        List<Integer> actual = of(nrs).skipWhile((e) -> e < 4).toList();
+        var expected = List.of(5, 6, 7, 8);
+        assertEquals(expected, actual);
+    }
     
     @Test
     public void testSkip(){
@@ -144,9 +165,19 @@ public class PipeIterableTests {
         nrs = nrs.cache();
         
         var nrs1 = nrs.limit(10);
-        
         var expected = nrs.limit(10).toList();
         var actual = nrs.limit(10).toList();
+
+        assertEquals(nrs1.toList(), expected);
+        assertEquals(expected, actual);
+
+        PipeIterable<Integer> nrsGen = iterate(0, n -> n + 1);
+        nrsGen = nrsGen.cache();
+        nrsGen.limit(20);
+
+        expected = nrsGen.limit(5).toList();
+        actual = nrsGen.limit(5).toList();
+
         assertEquals(expected, actual);
     }
     
