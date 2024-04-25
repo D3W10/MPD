@@ -167,6 +167,9 @@ public interface PipeIterable<T> extends Iterable<T> {
 
                 @Override
                 public T next() {
+                    if (!hasNext())
+                        throw new NoSuchElementException();
+
                     if (count++ >= cachedValues.size())
                         cachedValues.add(it.next());
 
