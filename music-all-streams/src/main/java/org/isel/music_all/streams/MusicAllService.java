@@ -1,19 +1,19 @@
 
 package org.isel.music_all.streams;
 
-import org.isel.music_all.streams.dto.*;
-import org.isel.music_all.streams.model.*;
+import org.isel.music_all.streams.dto.AlbumDto;
+import org.isel.music_all.streams.dto.ArtistDto;
+import org.isel.music_all.streams.dto.TrackDto;
+import org.isel.music_all.streams.model.Album;
+import org.isel.music_all.streams.model.Artist;
+import org.isel.music_all.streams.model.ArtistDetail;
+import org.isel.music_all.streams.model.Track;
 
-
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.util.Comparator.comparing;
-import static java.util.stream.Stream.of;
-
 import static org.isel.leirt.music_all.Errors.TODO;
-import static org.isel.music_all.streams.utils.StreamUtils.intersection;
 
 public class MusicAllService {
 
@@ -23,10 +23,29 @@ public class MusicAllService {
         this.api = api;
     }
 
-
     public Stream<Artist> searchArtist(String name, int maxItems) {
-        TODO("searchArtist");
-        return null;
+        List<ArtistDto> artistDtos = new ArrayList<>();
+
+        int page = 1;
+        while (artistDtos.size() < maxItems) {
+            List<ArtistDto> pageArtistDtos = api.searchArtist(name, page);
+
+            if (pageArtistDtos.isEmpty())
+                break;
+
+            artistDtos.addAll(pageArtistDtos);
+            page++;
+        }
+
+        return artistDtos.stream()
+                .map(artistDto -> new Artist(
+                        artistDto.getName(),
+                        artistDto.getListeners(),
+                        artistDto.getMbid(),
+                        artistDto.getUrl(),
+                        artistDto.getImage()[0].getImageUrl()
+                ))
+                .limit(maxItems);
     }
 
     public Stream<Album> getAlbums(String artistMbid) {

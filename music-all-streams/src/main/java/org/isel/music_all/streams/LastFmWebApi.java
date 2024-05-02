@@ -67,7 +67,7 @@ public class LastFmWebApi {
         String path = String.format(LASTFM_SEARCH, name, page);
         try(Reader reader= request.get(path)) {
             SearchArtistDto searchResult = gson.fromJson(reader, SearchArtistDto.class);
-            
+
             return searchResult.getResults().getArtistMatches().stream().filter(artistDto -> artistDto.getMbid() != null && !artistDto.getMbid().isEmpty()).toList();
         }
         catch(IOException e) {
