@@ -8,7 +8,9 @@ import org.isel.music_all.streams.model.Album;
 import org.isel.music_all.streams.model.Artist;
 import org.isel.music_all.streams.model.ArtistDetail;
 import org.isel.music_all.streams.model.Track;
+import org.isel.music_all.streams.utils.StreamUtils;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -82,25 +84,61 @@ public class MusicAllService {
     }
 */
     private Stream<Track> getAlbumTracks(String albumMbid) {
-        // TODO Fix, not getFirst()
-        return Stream.generate(() -> api.getAlbumInfo(albumMbid).stream()
-                .map(trackDto -> new Track(
-                        trackDto.getName(),
-                        trackDto.getUrl(),
-                        trackDto.getDuration()
-                )).toList().getFirst());
+        final boolean[] isComplete = {false};
+
+        return Stream.generate(new Supplier<Track>() {
+            private int idx = 0;
+            private List<Track> cache;
+
+            @Override
+            public Track get() {
+                if (cache == null || cache.size() == idx) {
+                    cache = api.getAlbumInfo(albumMbid).stream()
+                            .map(trackDto -> dtoToTrack(trackDto)).toList();
+                    idx = 0;
+                }
+
+                if (cache.isEmpty()) {
+                    isComplete[0] = true;
+                    return null;
+                }
+
+                return cache.get(idx++);
+            }
+        }).takeWhile(album -> !isComplete[0]);
     }
 
     private Stream<Track> getTracks(String artistMbid) {
-        // TODO Fix, not getFirst()
-        return Stream.generate(() -> api.getAlbumInfo(artistMbid).stream()
-                .map(trackDto -> new Track(
-                        trackDto.getName(),
-                        trackDto.getUrl(),
-                        trackDto.getDuration()
-                )).toList().getFirst());
+        final boolean[] isComplete = {false};
+
+        return Stream.generate(new Supplier<Track>() {
+            private int albumIdx = 0;
+            private int idx = 0;
+            private Iterator<Album> albums = getAlbums(artistMbid).iterator();
+            private List<Track> cache;
+
+            @Override
+            public Track get() {
+                if (cache == null || cache.size() == idx) {
+                    if (!albums.hasNext()) {
+                        isComplete[0] = true;
+                        return null;
+                    }
+
+                    cache = api.getAlbumInfo(albums.next().getMbid()).stream()
+                            .map(trackDto -> dtoToTrack(trackDto)).toList();
+                    idx = 0;
+                }
+
+                if (cache.isEmpty()) {
+                    isComplete[0] = true;
+                    return null;
+                }
+
+                return cache.get(idx++);
+            }
+        }).takeWhile(album -> !isComplete[0]);
     }
-    
 
     private Stream<String> similarArtists(String artist) {
         TODO("similarArtists");
@@ -108,8 +146,15 @@ public class MusicAllService {
     }
 
     public Stream<String> commonArtists(String artist1, String artist2) {
-        TODO("commonArtists");
-        return null;
+        ArtistDetail artistDetail1 = getArtistDetail(artist1);
+        ArtistDetail artistDetail2 = getArtistDetail(artist2);
+
+        return StreamUtils.intersection(
+                artistDetail1.getSimilarArtists().stream(),
+                artistDetail2.getSimilarArtists().stream(),
+                String::equals,
+                (a, b) -> a
+        );
     }
 
     public ArtistDetail getArtistDetail(String artistMbid) {
@@ -125,7 +170,8 @@ public class MusicAllService {
                 dto.getUrl(),
                 dto.getImage()[0].getImageUrl(),
                 getAlbums(dto.getMbid()),
-                getTracks(dto.getMbid()));
+                getTracks(dto.getMbid())
+        );
     }
 
     private Album dtoToAlbum(AlbumDto dto) {
@@ -135,12 +181,15 @@ public class MusicAllService {
                 dto.getMbid(),
                 dto.getUrl(),
                 dto.getImage()[0].getImageUrl(),
-                getAlbumTracks(dto.getMbid()));
+                getAlbumTracks(dto.getMbid())
+        );
     }
 
     private Track dtoToTrack(TrackDto dto) {
-        TODO("dtoToTrack");
-        return null;
+        return new Track(
+                dto.getName(),
+                dto.getUrl(),
+                dto.getDuration()
+        );
     }
-    
 }
