@@ -1,5 +1,7 @@
 package org.isel.music_all.streams.utils;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
@@ -14,9 +16,14 @@ public class StreamUtils {
     }
    
     public static <T> Supplier<Stream<T>> cache(Stream<T> src) {
-        List<T> cachedValues = src.toList();
+        Iterator<T> it = src.iterator();
+        List<T> cachedValues = new ArrayList<>();
 
-        return cachedValues::stream;
+        return () -> {
+            it.forEachRemaining(cachedValues::add);
+
+            return cachedValues.stream();
+        };
     }
  
     public  static <T,U,V> Stream<V> intersection(
