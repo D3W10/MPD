@@ -1,12 +1,11 @@
 package org.isel.music_all.streams.utils;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
-
-import static org.isel.leirt.music_all.Errors.TODO;
 
 public class StreamUtils {
     
@@ -15,8 +14,9 @@ public class StreamUtils {
     }
    
     public static <T> Supplier<Stream<T>> cache(Stream<T> src) {
-       TODO("cache");
-       return null;
+        List<T> cachedValues = src.toList();
+
+        return cachedValues::stream;
     }
  
     public  static <T,U,V> Stream<V> intersection(
@@ -25,7 +25,9 @@ public class StreamUtils {
         BiPredicate<T,U> matched,
         BiFunction<T,U, V> mapper) {
 
-        TODO("intersection");
-        return null;
+        Stream<T> cachedSeq1 = cache(seq1).get();
+        Stream<U> cachedSeq2 = cache(seq2).get();
+
+        return cachedSeq1.flatMap(t -> cachedSeq2.filter(u -> matched.test(t, u)).map(u -> mapper.apply(t, u)));
     }
 }
