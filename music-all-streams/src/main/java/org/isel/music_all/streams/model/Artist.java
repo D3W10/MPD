@@ -30,10 +30,7 @@
 
 package org.isel.music_all.streams.model;
 
-import java.util.function.Supplier;
 import java.util.stream.Stream;
-
-import static org.isel.leirt.music_all.Errors.TO_COMPLETE;
 
 public class Artist {
     final String name;
@@ -42,17 +39,19 @@ public class Artist {
     final String url;
     final String image;
     private ArtistDetail detail;
-
+    private final Stream<Album> albums;
+    private final Stream<Track> tracks;
 
     public Artist(String name, int listeners, String mbid, String url,
-                  String image
+                  String image, Stream<Album> albums, Stream<Track> tracks
                  ) {
         this.name = name;
         this.listeners = listeners;
         this.mbid = mbid;
         this.url = url;
         this.image = image;
-        TO_COMPLETE("Artist");
+        this.albums = albums;
+        this.tracks = tracks;
     }
 
     public String getName() {
@@ -76,19 +75,20 @@ public class Artist {
     }
 
     public Stream<Album> getAlbums() {
-        
-        TO_COMPLETE("getAlbums");
-        return null;
+        return albums;
     }
 
     public Stream<Track> getTracks() {
-        TO_COMPLETE("getTracks");
-        return null;
+        return tracks;
     }
 
     public ArtistDetail getDetail() {
-        TO_COMPLETE("getDetail");
-        return null;
+        if (detail == null) {
+            // TODO
+            //detail = new ArtistDetail(this);
+        }
+
+        return detail;
     }
 
 }
