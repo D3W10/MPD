@@ -112,7 +112,6 @@ public class MusicAllService {
         final boolean[] isComplete = {false};
 
         return Stream.generate(new Supplier<Track>() {
-            private int albumIdx = 0;
             private int idx = 0;
             private Iterator<Album> albums = getAlbums(artistMbid).iterator();
             private List<Track> cache;

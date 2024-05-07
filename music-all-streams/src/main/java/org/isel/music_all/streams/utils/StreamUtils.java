@@ -32,7 +32,7 @@ public class StreamUtils {
         };
     }
  
-    public  static <T,U,V> Stream<V> intersection(
+    public static <T,U,V> Stream<V> intersection(
         Stream<T> seq1,
         Stream<U> seq2,
         BiPredicate<T,U> matched,
