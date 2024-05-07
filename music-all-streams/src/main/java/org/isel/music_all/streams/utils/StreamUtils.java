@@ -1,9 +1,6 @@
 package org.isel.music_all.streams.utils;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.Supplier;
@@ -19,10 +16,19 @@ public class StreamUtils {
         Iterator<T> it = src.iterator();
         List<T> cachedValues = new ArrayList<>();
 
-        return () -> {
-            it.forEachRemaining(cachedValues::add);
+        return new Supplier<>() {
+            private int count = 0;
 
-            return cachedValues.stream();
+            @Override
+            public Stream<T> get() {
+                if (!it.hasNext())
+                    throw new NoSuchElementException();
+
+                if (count++ >= cachedValues.size())
+                    cachedValues.add(it.next());
+
+                return cachedValues.stream();
+            }
         };
     }
  
