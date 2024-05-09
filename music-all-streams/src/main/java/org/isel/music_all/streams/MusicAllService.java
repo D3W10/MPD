@@ -2,6 +2,7 @@
 package org.isel.music_all.streams;
 
 import org.isel.music_all.streams.dto.AlbumDto;
+import org.isel.music_all.streams.dto.ArtistDetailDto;
 import org.isel.music_all.streams.dto.ArtistDto;
 import org.isel.music_all.streams.dto.TrackDto;
 import org.isel.music_all.streams.model.Album;
@@ -10,8 +11,12 @@ import org.isel.music_all.streams.model.ArtistDetail;
 import org.isel.music_all.streams.model.Track;
 import org.isel.music_all.streams.utils.StreamUtils;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -26,56 +31,24 @@ public class MusicAllService {
     }
 
     public Stream<Artist> searchArtist(String name, int maxItems) {
-        final boolean[] isComplete = {false};
+        final int[] nPages = {1};
+        Stream<Integer> pages = Stream.generate(() -> nPages[0]++);
 
-        return Stream.generate(new Supplier<Artist>() {
-            private int page = 1;
-            private int idx = 0;
-            private List<Artist> cache;
-
-            @Override
-            public Artist get() {
-                if (cache == null || cache.size() == idx) {
-                    cache = api.searchArtist(name, page++).stream()
-                            .limit(maxItems)
-                            .map(artistDto -> dtoToArtist(artistDto)).toList();
-                    idx = 0;
-                }
-
-                if (cache.isEmpty() || idx + 1 > maxItems) {
-                    isComplete[0] = true;
-                    return null;
-                }
-
-                return cache.get(idx++);
-            }
-        }).takeWhile(album -> !isComplete[0]);
+        return pages.map(i -> api.searchArtist(name, i))
+            .takeWhile(l -> !l.isEmpty())
+            .flatMap(Collection::stream)
+            .map(this::dtoToArtist)
+            .limit(maxItems);
     }
 
     public Stream<Album> getAlbums(String artistMbid) {
-        final boolean[] isComplete = {false};
+        final int[] nPages = {1};
+        Stream<Integer> pages = Stream.generate(() -> nPages[0]++);
 
-        return Stream.generate(new Supplier<Album>() {
-            private int page = 1;
-            private int idx = 0;
-            private List<Album> cache;
-
-            @Override
-            public Album get() {
-                if (cache == null || cache.size() == idx) {
-                    cache = api.getAlbums(artistMbid, page++).stream()
-                            .map(albumDto -> dtoToAlbum(albumDto)).toList();
-                    idx = 0;
-                }
-
-                if (cache.isEmpty()) {
-                    isComplete[0] = true;
-                    return null;
-                }
-
-                return cache.get(idx++);
-            }
-        }).takeWhile(album -> !isComplete[0]);
+        return pages.map(i -> api.getAlbums(artistMbid, i))
+            .takeWhile(l -> !l.isEmpty())
+            .flatMap(Collection::stream)
+            .map(this::dtoToAlbum);
     }
 /*
     public Stream<Album> getAlbumByName(String artistMbid, String name) {
@@ -84,69 +57,29 @@ public class MusicAllService {
     }
 */
     private Stream<Track> getAlbumTracks(String albumMbid) {
-        final boolean[] isComplete = {false};
-
-        return Stream.generate(new Supplier<Track>() {
-            private int idx = 0;
-            private List<Track> cache;
-
-            @Override
-            public Track get() {
-                if (cache == null || cache.size() == idx) {
-                    cache = api.getAlbumInfo(albumMbid).stream()
-                            .map(trackDto -> dtoToTrack(trackDto)).toList();
-                    idx = 0;
-                }
-
-                if (cache.isEmpty()) {
-                    isComplete[0] = true;
-                    return null;
-                }
-
-                return cache.get(idx++);
-            }
-        }).takeWhile(album -> !isComplete[0]);
+        return api.getAlbumInfo(albumMbid)
+            .stream()
+            .map(this::dtoToTrack);
     }
 
     private Stream<Track> getTracks(String artistMbid) {
-        final boolean[] isComplete = {false};
-
-        return Stream.generate(new Supplier<Track>() {
-            private int idx = 0;
-            private Iterator<Album> albums = getAlbums(artistMbid).iterator();
-            private List<Track> cache;
-
-            @Override
-            public Track get() {
-                if (cache == null || cache.size() == idx) {
-                    if (!albums.hasNext()) {
-                        isComplete[0] = true;
-                        return null;
-                    }
-
-                    cache = api.getAlbumInfo(albums.next().getMbid()).stream()
-                            .map(trackDto -> dtoToTrack(trackDto)).toList();
-                    idx = 0;
-                }
-
-                if (cache.isEmpty()) {
-                    isComplete[0] = true;
-                    return null;
-                }
-
-                return cache.get(idx++);
-            }
-        }).takeWhile(album -> !isComplete[0]);
+        return getAlbums(artistMbid)
+            .map(a -> getAlbumTracks(a.getMbid()).toList())
+            .flatMap(Collection::stream);
     }
 
     private Stream<String> similarArtists(String artist) {
-        TODO("similarArtists");
-        return null;
+        List<Artist> artistList = searchArtist(artist, 1).toList();
+
+        return api.getArtistInfo(artistList.getFirst().getMbid())
+            .getSimilarArtists()
+            .stream()
+            .map(ArtistDto::getName);
     }
 
     public Stream<String> commonArtists(String artist1, String artist2) {
-        ArtistDetail artistDetail1 = getArtistDetail(artist1);
-        ArtistDetail artistDetail2 = getArtistDetail(artist2);
+        ArtistDetail artistDetail1 = getArtistDetail(searchArtist(artist1, 1).toList().getFirst().getMbid());
+        ArtistDetail artistDetail2 = getArtistDetail(searchArtist(artist2, 1).toList().getFirst().getMbid());
 
         return StreamUtils.intersection(
                 artistDetail1.getSimilarArtists().stream(),
@@ -157,8 +90,11 @@ public class MusicAllService {
     }
 
     public ArtistDetail getArtistDetail(String artistMbid) {
-        TODO("getArtistDetail");
-        return null;
+        ArtistDetailDto detail = api.getArtistInfo(artistMbid);
+
+        return new ArtistDetail(detail.getSimilarArtists().stream().map(ArtistDto::getName).toList(),
+                detail.getGenres(),
+                detail.getBio());
     }
 
     private Artist dtoToArtist(ArtistDto dto) {
