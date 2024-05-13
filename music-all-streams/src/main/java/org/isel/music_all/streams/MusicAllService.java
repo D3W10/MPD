@@ -116,7 +116,7 @@ public class MusicAllService {
                 dto.getMbid(),
                 dto.getUrl(),
                 dto.getImage()[0].getImageUrl(),
-                getAlbumTracks(dto.getMbid())
+                () -> getAlbumTracks(dto.getMbid())
         );
     }
 
