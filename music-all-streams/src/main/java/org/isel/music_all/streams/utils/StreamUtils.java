@@ -48,8 +48,8 @@ public class StreamUtils {
         BiFunction<T,U, V> mapper) {
 
         Stream<T> cachedSeq1 = cache(seq1).get();
-        Stream<U> cachedSeq2 = cache(seq2).get();
+        Supplier<Stream<U>> supCachedSeq2 = cache(seq2);
 
-        return cachedSeq1.flatMap(t -> cachedSeq2.filter(u -> matched.test(t, u)).map(u -> mapper.apply(t, u)));
+        return cachedSeq1.flatMap(t -> supCachedSeq2.get().filter(u -> matched.test(t, u)).map(u -> mapper.apply(t, u)));
     }
 }
