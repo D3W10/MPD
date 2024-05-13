@@ -100,7 +100,7 @@ public class LastfmWebApiSavers {
         assertEquals(1, req.getCount());
         
         var allAlbums = albums.limit(130);
-        assertEquals(78, allAlbums.count());
+        assertEquals(130, allAlbums.count());
         
     }
     

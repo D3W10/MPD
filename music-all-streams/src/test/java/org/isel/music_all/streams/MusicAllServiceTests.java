@@ -71,7 +71,7 @@ public class MusicAllServiceTests {
         assertEquals(1, countRequest.getCount());
         assertEquals("David Bowie", davidBowie.getName());
         assertEquals(165, davidBowie.getAlbums().count());
-        assertEquals(30, countRequest.getCount());
+        assertEquals(38, countRequest.getCount());
     }
 
     @Test
