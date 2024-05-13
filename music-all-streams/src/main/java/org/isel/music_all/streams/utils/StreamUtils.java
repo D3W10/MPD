@@ -5,6 +5,7 @@ import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 public class StreamUtils {
     
@@ -13,25 +14,33 @@ public class StreamUtils {
     }
    
     public static <T> Supplier<Stream<T>> cache(Stream<T> src) {
-        Iterator<T> it = src.iterator();
         List<T> cachedValues = new ArrayList<>();
+        Iterator<T> srcIterator = src.iterator();
 
-        return new Supplier<>() {
-            private int count = 0;
+        return () -> Stream.concat(
+                cachedValues.stream(),
+                StreamSupport.stream(
+                        Spliterators.spliteratorUnknownSize(
+                                new Iterator<T>() {
+                                    @Override
+                                    public boolean hasNext() {
+                                        return srcIterator.hasNext();
+                                    }
 
-            @Override
-            public Stream<T> get() {
-                if (!it.hasNext())
-                    throw new NoSuchElementException();
-
-                if (count++ >= cachedValues.size())
-                    cachedValues.add(it.next());
-
-                return cachedValues.stream();
-            }
-        };
+                                    @Override
+                                    public T next() {
+                                        T next = srcIterator.next();
+                                        cachedValues.add(next);
+                                        return next;
+                                    }
+                                },
+                                Spliterator.ORDERED
+                        ),
+                        false
+                )
+        );
     }
- 
+
     public static <T,U,V> Stream<V> intersection(
         Stream<T> seq1,
         Stream<U> seq2,
