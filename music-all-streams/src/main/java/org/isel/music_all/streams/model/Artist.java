@@ -30,6 +30,7 @@
 
 package org.isel.music_all.streams.model;
 
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 public class Artist {
@@ -39,11 +40,11 @@ public class Artist {
     final String url;
     final String image;
     private ArtistDetail detail;
-    private final Stream<Album> albums;
-    private final Stream<Track> tracks;
+    private final Supplier<Stream<Album>> albums;
+    private final Supplier<Stream<Track>> tracks;
 
     public Artist(String name, int listeners, String mbid, String url,
-                  String image, Stream<Album> albums, Stream<Track> tracks
+                  String image, Supplier<Stream<Album>> albums  , Supplier<Stream<Track>> tracks
                  ) {
         this.name = name;
         this.listeners = listeners;
@@ -75,11 +76,11 @@ public class Artist {
     }
 
     public Stream<Album> getAlbums() {
-        return albums;
+        return albums.get();
     }
 
     public Stream<Track> getTracks() {
-        return tracks;
+        return tracks.get();
     }
 
     public ArtistDetail getDetail() {
