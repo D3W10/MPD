@@ -12,15 +12,8 @@ import org.isel.music_all.streams.model.Track;
 import org.isel.music_all.streams.utils.StreamUtils;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
 import java.util.stream.Stream;
-
-import static org.isel.leirt.music_all.Errors.TODO;
 
 public class MusicAllService {
 
@@ -104,8 +97,8 @@ public class MusicAllService {
                 dto.getMbid(),
                 dto.getUrl(),
                 dto.getImage()[0].getImageUrl(),
-                getAlbums(dto.getMbid()),
-                getTracks(dto.getMbid())
+                () -> getAlbums(dto.getMbid()),
+                () -> getTracks(dto.getMbid())
         );
     }
 
