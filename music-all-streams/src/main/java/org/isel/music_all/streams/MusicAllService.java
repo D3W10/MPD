@@ -1,4 +1,3 @@
-
 package org.isel.music_all.streams;
 
 import org.isel.music_all.streams.dto.AlbumDto;
@@ -98,7 +97,7 @@ public class MusicAllService {
                 dto.getUrl(),
                 dto.getImage()[0].getImageUrl(),
                 () -> getAlbums(dto.getMbid()),
-                () -> getTracks(dto.getMbid())
+                () -> getArtistDetail(dto.getMbid())
         );
     }
 
