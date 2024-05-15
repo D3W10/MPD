@@ -41,18 +41,17 @@ public class Artist {
     final String image;
     private ArtistDetail detail;
     private final Supplier<Stream<Album>> albums;
-    private final Supplier<Stream<Track>> tracks;
+    private final Supplier<ArtistDetail> detailSup;
 
     public Artist(String name, int listeners, String mbid, String url,
-                  String image, Supplier<Stream<Album>> albums  , Supplier<Stream<Track>> tracks
-                 ) {
+                  String image, Supplier<Stream<Album>> albums, Supplier<ArtistDetail> detailSup) {
         this.name = name;
         this.listeners = listeners;
         this.mbid = mbid;
         this.url = url;
         this.image = image;
         this.albums = albums;
-        this.tracks = tracks;
+        this.detailSup = detailSup;
     }
 
     public String getName() {
@@ -80,16 +79,10 @@ public class Artist {
     }
 
     public Stream<Track> getTracks() {
-        return tracks.get();
+        return albums.get().flatMap(Album::getTracks);
     }
 
     public ArtistDetail getDetail() {
-        if (detail == null) {
-            // TODO
-            //detail = new ArtistDetail(this);
-        }
-
-        return detail;
+        return detailSup.get();
     }
-
 }
