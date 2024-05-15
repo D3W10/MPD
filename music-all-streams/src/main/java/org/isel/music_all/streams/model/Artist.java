@@ -33,8 +33,6 @@ package org.isel.music_all.streams.model;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import static org.isel.leirt.music_all.Errors.TO_COMPLETE;
-
 public class Artist {
     final String name;
     final int listeners;
@@ -42,17 +40,18 @@ public class Artist {
     final String url;
     final String image;
     private ArtistDetail detail;
-
+    private final Supplier<Stream<Album>> albums;
+    private final Supplier<ArtistDetail> detailSup;
 
     public Artist(String name, int listeners, String mbid, String url,
-                  String image
-                 ) {
+                  String image, Supplier<Stream<Album>> albums, Supplier<ArtistDetail> detailSup) {
         this.name = name;
         this.listeners = listeners;
         this.mbid = mbid;
         this.url = url;
         this.image = image;
-        TO_COMPLETE("Artist");
+        this.albums = albums;
+        this.detailSup = detailSup;
     }
 
     public String getName() {
@@ -76,19 +75,14 @@ public class Artist {
     }
 
     public Stream<Album> getAlbums() {
-        
-        TO_COMPLETE("getAlbums");
-        return null;
+        return albums.get();
     }
 
     public Stream<Track> getTracks() {
-        TO_COMPLETE("getTracks");
-        return null;
+        return albums.get().flatMap(Album::getTracks);
     }
 
     public ArtistDetail getDetail() {
-        TO_COMPLETE("getDetail");
-        return null;
+        return detailSup.get();
     }
-
 }

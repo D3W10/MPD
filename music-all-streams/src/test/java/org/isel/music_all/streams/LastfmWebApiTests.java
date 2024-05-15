@@ -32,7 +32,6 @@ package org.isel.music_all.streams;
 
 import org.isel.leirt.music_all.requests.CountRequest;
 import org.isel.leirt.music_all.requests.HttpRequest;
-import org.isel.leirt.music_all.requests.MockRequest;
 import org.isel.leirt.music_all.requests.Request;
 import org.isel.music_all.streams.dto.AlbumDto;
 import org.isel.music_all.streams.dto.ArtistDetailDto;
@@ -40,15 +39,10 @@ import org.isel.music_all.streams.dto.ArtistDto;
 import org.isel.music_all.streams.dto.TrackDto;
 import org.junit.jupiter.api.Test;
 
-import java.io.Reader;
 import java.util.List;
-import java.util.function.Function;
 
-import static java.util.Comparator.comparing;
-import static java.util.stream.Stream.of;
-
-import static org.isel.leirt.music_all.queries.PipeIterable.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.isel.leirt.music_all.queries.PipeIterable.range;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 public class LastfmWebApiTests {

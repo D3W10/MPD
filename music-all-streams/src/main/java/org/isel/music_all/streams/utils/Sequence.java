@@ -9,8 +9,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import static org.isel.leirt.music_all.Errors.TODO;
-
 public interface Sequence<T> {
 
     /**
@@ -58,19 +56,46 @@ public interface Sequence<T> {
     }
 
     default Sequence<T> concat(Sequence<T> other) {
-        TODO("concat");
-        return null;
+        return action -> {
+            if (this.tryAdvance(action))
+                return true;
+
+            return other.tryAdvance(action);
+        };
     }
 
   
     default Sequence<T> skip(int n) {
-        TODO("skip");
-        return null;
+        return new Sequence<>() {
+            private int count = 0;
+            private boolean skipped = false;
+
+            @Override
+            public boolean tryAdvance(Consumer<T> action) {
+                if (!skipped) {
+                    skipped = true;
+                    while (count < n && Sequence.this.tryAdvance(t -> count++));
+                }
+                return count >= n && Sequence.this.tryAdvance(action);
+            }
+        };
     }
     
     default <U, V> Sequence<V> zip(Sequence<U> other, BiFunction<T,U,V> combiner ) {
-        TODO("zip");
-        return null;
+        return action -> {
+            Optional<T> optT = first();
+            Optional<U> optU = other.first();
+
+            if (optT.isPresent() && optU.isPresent()) {
+                T t = optT.get();
+                U u = optU.get();
+                V v = combiner.apply(t, u);
+                action.accept(v);
+                return true;
+            }
+
+            return false;
+        };
     }
 
  

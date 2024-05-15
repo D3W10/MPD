@@ -1,6 +1,6 @@
 package org.isel.leirt.music_all.requests;
 
-import java.io.Reader;
+import java.io.*;
 
 public class SaverRequest implements Request {
     private final Request request;
@@ -12,7 +12,18 @@ public class SaverRequest implements Request {
     @Override
     public Reader get(String path) {
         Reader response = request.get(path);
-        MockRequest.saveOn(path, response);
-        return response;
+        Writer writer = new StringWriter();
+
+        try {
+            response.transferTo(writer);
+            String buf = writer.toString();
+
+            MockRequest.saveOn(path, new StringReader(buf));
+
+            return new StringReader(buf);
+        }
+        catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 }

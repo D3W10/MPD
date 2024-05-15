@@ -36,7 +36,7 @@ import java.net.URL;
 
 public class MockRequest implements Request {
     
-    private static String CACHE_NAME = "weather_cache";
+    private static String CACHE_NAME = "music_cache";
     
     private static final String CACHE_PATH = getCachePath();
     

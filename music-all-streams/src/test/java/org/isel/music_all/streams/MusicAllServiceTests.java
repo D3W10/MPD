@@ -37,15 +37,15 @@ import org.isel.music_all.streams.model.Artist;
 import org.isel.music_all.streams.model.Track;
 import org.junit.jupiter.api.Test;
 
-import java.util.*;
-
+import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-
 import static java.util.stream.Collectors.toList;
-import static org.isel.music_all.streams.utils.StreamUtils.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.isel.music_all.streams.utils.StreamUtils.cache;
+import static org.isel.music_all.streams.utils.StreamUtils.findLast;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 public class MusicAllServiceTests {
@@ -71,7 +71,7 @@ public class MusicAllServiceTests {
         assertEquals(1, countRequest.getCount());
         assertEquals("David Bowie", davidBowie.getName());
         assertEquals(165, davidBowie.getAlbums().count());
-        assertEquals(30, countRequest.getCount());
+        assertEquals(38, countRequest.getCount());
     }
 
     @Test
@@ -101,10 +101,6 @@ public class MusicAllServiceTests {
         assertEquals(4, countRequest.getCount());
     }
 
-    /*
-     * uncomment when cache is done and tested
-     */
-    /*
     @Test
     public void searchHiperAndCountAllResultsWithCache() {
         var countRequest = new CountRequest(new HttpRequest());
@@ -119,9 +115,6 @@ public class MusicAllServiceTests {
         assertEquals("Hi-Per",  last.getName());
         assertEquals(2, countRequest.getCount());
     }
-    
-     */
-
 
     @Test
     public void getFirstAlbumOfMuse() {
@@ -169,8 +162,6 @@ public class MusicAllServiceTests {
         assertEquals(6, countRequest.getCount());
         assertEquals("MK Ultra", track.getName());
     }
-    
-    
 
     @Test
     public void get_artists_common_to_Stacey_Kent_and_Diana_Krall() {

@@ -2,14 +2,16 @@ package org.isel.music_all.streams;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Random;
-
-import static java.util.stream.Collectors.*;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import static org.isel.music_all.streams.utils.StreamUtils.cache;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static java.util.stream.Collectors.toList;
+import static org.isel.music_all.streams.utils.StreamUtils.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class StreamUtilsTests {
     @Test
@@ -50,5 +52,42 @@ public class StreamUtilsTests {
         assertEquals(1, ia[0]);
         assertEquals(2, ia[1]);
     }
-    
+
+    @Test
+    public void testFindLastEmptyStream() {
+        Optional<String> result = findLast(Stream.empty());
+        assertFalse(result.isPresent());
+    }
+
+    @Test
+    public void testFindLastNonEmptyStream() {
+        Optional<String> result = findLast(Stream.of("apple", "banana", "cherry"));
+        assertTrue(result.isPresent());
+        assertEquals("cherry", result.get());
+    }
+
+    @Test
+    public void testFindLastWithNullValues() {
+        Optional<String> result = findLast(Stream.of("apple", null, "cherry"));
+        assertTrue(result.isPresent());
+        assertEquals("cherry", result.get());
+    }
+
+    @Test
+    void testIntersectionWithEmptyStreams() {
+        Stream<?> result = intersection(Stream.empty(), Stream.empty(), Objects::equals, (a, b) -> a);
+        assertEquals(0, result.count());
+    }
+
+    @Test
+    void testIntersectionWithNonEmptyLists() {
+        List<Integer> expected = List.of(3, 4);
+        List<Integer> result = intersection(Stream.of(1, 2, 3, 4, 5), Stream.of(3, 4, 6, 7, 8), Objects::equals, (a, b) -> a).toList();
+        assertEquals(expected, result);
+    }
+
+    @Test
+    void testIntersectionWithNullInput() {
+        assertThrows(NullPointerException.class, () -> intersection(Stream.of(1, 2, 3), null, Objects::equals, (a, b) -> a));
+    }
 }

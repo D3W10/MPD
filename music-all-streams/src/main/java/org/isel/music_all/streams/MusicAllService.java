@@ -1,19 +1,18 @@
-
 package org.isel.music_all.streams;
 
-import org.isel.music_all.streams.dto.*;
-import org.isel.music_all.streams.model.*;
+import org.isel.music_all.streams.dto.AlbumDto;
+import org.isel.music_all.streams.dto.ArtistDetailDto;
+import org.isel.music_all.streams.dto.ArtistDto;
+import org.isel.music_all.streams.dto.TrackDto;
+import org.isel.music_all.streams.model.Album;
+import org.isel.music_all.streams.model.Artist;
+import org.isel.music_all.streams.model.ArtistDetail;
+import org.isel.music_all.streams.model.Track;
+import org.isel.music_all.streams.utils.StreamUtils;
 
-
+import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static java.util.Comparator.comparing;
-import static java.util.stream.Stream.of;
-
-import static org.isel.leirt.music_all.Errors.TODO;
-import static org.isel.music_all.streams.utils.StreamUtils.intersection;
 
 public class MusicAllService {
 
@@ -23,15 +22,25 @@ public class MusicAllService {
         this.api = api;
     }
 
-
     public Stream<Artist> searchArtist(String name, int maxItems) {
-        TODO("searchArtist");
-        return null;
+        final int[] nPages = {1};
+        Stream<Integer> pages = Stream.generate(() -> nPages[0]++);
+
+        return pages.map(i -> api.searchArtist(name, i))
+            .takeWhile(l -> !l.isEmpty())
+            .flatMap(Collection::stream)
+            .map(this::dtoToArtist)
+            .limit(maxItems);
     }
 
     public Stream<Album> getAlbums(String artistMbid) {
-        TODO("getAlbums");
-        return null;
+        final int[] nPages = {1};
+        Stream<Integer> pages = Stream.generate(() -> nPages[0]++);
+
+        return pages.map(i -> api.getAlbums(artistMbid, i))
+            .takeWhile(l -> !l.isEmpty())
+            .flatMap(Collection::stream)
+            .map(this::dtoToAlbum);
     }
 /*
     public Stream<Album> getAlbumByName(String artistMbid, String name) {
@@ -40,45 +49,74 @@ public class MusicAllService {
     }
 */
     private Stream<Track> getAlbumTracks(String albumMbid) {
-        TODO("getAlbumTracks");
-        return null;
+        return api.getAlbumInfo(albumMbid)
+            .stream()
+            .map(this::dtoToTrack);
     }
 
     private Stream<Track> getTracks(String artistMbid) {
-        TODO("getTracks");
-        return null;
-
+        return getAlbums(artistMbid)
+            .map(a -> getAlbumTracks(a.getMbid()).toList())
+            .flatMap(Collection::stream);
     }
-    
 
     private Stream<String> similarArtists(String artist) {
-        TODO("similarArtists");
-        return null;
+        List<Artist> artistList = searchArtist(artist, 1).toList();
+
+        return api.getArtistInfo(artistList.getFirst().getMbid())
+            .getSimilarArtists()
+            .stream()
+            .map(ArtistDto::getName);
     }
 
     public Stream<String> commonArtists(String artist1, String artist2) {
-        TODO("commonArtists");
-        return null;
+        ArtistDetail artistDetail1 = getArtistDetail(searchArtist(artist1, 1).toList().getFirst().getMbid());
+        ArtistDetail artistDetail2 = getArtistDetail(searchArtist(artist2, 1).toList().getFirst().getMbid());
+
+        return StreamUtils.intersection(
+                artistDetail1.getSimilarArtists().stream(),
+                artistDetail2.getSimilarArtists().stream(),
+                String::equals,
+                (a, b) -> a
+        );
     }
 
     public ArtistDetail getArtistDetail(String artistMbid) {
-        TODO("getArtistDetail");
-        return null;
+        ArtistDetailDto detail = api.getArtistInfo(artistMbid);
+
+        return new ArtistDetail(detail.getSimilarArtists().stream().map(ArtistDto::getName).toList(),
+                detail.getGenres(),
+                detail.getBio());
     }
 
     private Artist dtoToArtist(ArtistDto dto) {
-        TODO("dtoToArtist");
-        return null;
+        return new Artist(
+                dto.getName(),
+                dto.getListeners(),
+                dto.getMbid(),
+                dto.getUrl(),
+                dto.getImage()[0].getImageUrl(),
+                () -> getAlbums(dto.getMbid()),
+                () -> getArtistDetail(dto.getMbid())
+        );
     }
 
     private Album dtoToAlbum(AlbumDto dto) {
-        TODO("dtoToAlbum");
-        return null;
+        return new Album(
+                dto.getName(),
+                dto.getPlaycount(),
+                dto.getMbid(),
+                dto.getUrl(),
+                dto.getImage()[0].getImageUrl(),
+                () -> getAlbumTracks(dto.getMbid())
+        );
     }
 
     private Track dtoToTrack(TrackDto dto) {
-        TODO("dtoToTrack");
-        return null;
+        return new Track(
+                dto.getName(),
+                dto.getUrl(),
+                dto.getDuration()
+        );
     }
-    
 }

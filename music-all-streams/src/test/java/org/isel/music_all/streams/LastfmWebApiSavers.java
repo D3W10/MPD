@@ -2,7 +2,6 @@ package org.isel.music_all.streams;
 
 import org.isel.leirt.music_all.requests.CountRequest;
 import org.isel.leirt.music_all.requests.HttpRequest;
-import org.isel.leirt.music_all.requests.Request;
 import org.isel.leirt.music_all.requests.SaverRequest;
 import org.isel.music_all.streams.dto.AlbumDto;
 import org.isel.music_all.streams.dto.ArtistDetailDto;

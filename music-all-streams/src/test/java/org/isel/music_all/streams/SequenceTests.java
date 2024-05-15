@@ -1,11 +1,14 @@
 package org.isel.music_all.streams;
 
-import static org.isel.music_all.streams.utils.Sequence.of;
-import static org.junit.jupiter.api.Assertions.*;
-
 import org.isel.music_all.streams.utils.Sequence;
 import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
 import java.util.List;
+
+import static org.isel.music_all.streams.utils.Sequence.of;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SequenceTests {
     @Test
@@ -43,6 +46,19 @@ public class SequenceTests {
         var expected = List.of(2, 5, 7, 6, 4, 9, 2, 6, 4);
         assertEquals(expected, seqConcat.toList());
     }
+
+    @Test
+    public void concatTestEmpty() {
+        Sequence<Integer> emptySequence1 = Sequence.of(new ArrayList<>());
+        Sequence<Integer> emptySequence2 = Sequence.of(new ArrayList<>());
+
+        Sequence<Integer> concatenatedSequence = emptySequence1.concat(emptySequence2);
+
+        List<Integer> result = new ArrayList<>();
+        concatenatedSequence.tryAdvance(result::add);
+
+        assertTrue(result.isEmpty());
+    }
     
     @Test
     public void skipTest() {
@@ -52,6 +68,14 @@ public class SequenceTests {
         var seqSkip = numbers.skip(4);
         var expected = List.of(4,9);
         assertEquals(expected, seqSkip.toList());
+    }
+
+    @Test
+    public void skipTestEmpty() {
+        Sequence<Integer> sequence = Sequence.of(new ArrayList<>());
+        var skipped = sequence.skip(3);
+
+        assertTrue(skipped.toList().isEmpty());
     }
     
     @Test
@@ -68,6 +92,32 @@ public class SequenceTests {
             List.of("Jorge Martins","Mario Pinheiro", "Manuel Carvalho");
             
         assertEquals(expected, seqZip.toList());
+    }
+
+    @Test
+    public void zipTestLess() {
+        Sequence<String> names =
+                of(List.of("Jorge", "Mario", "Manuel"));
+
+        Sequence<String> surNames =
+                of(List.of("Martins", "Pinheiro"));
+
+        var seqZip = names.zip(surNames, (s1, s2) -> s1 + " " + s2);
+
+        var expected =
+                List.of("Jorge Martins","Mario Pinheiro");
+
+        assertEquals(expected, seqZip.toList());
+    }
+
+    @Test
+    public void zipTestEmpty() {
+        Sequence<String> seq1 = Sequence.of(new ArrayList<>());
+        Sequence<String> seq2 = Sequence.of(new ArrayList<>());
+
+        var seqZip = seq1.zip(seq2, (s1, s2) -> s1 + " " + s2);
+
+        assertEquals(List.of(), seqZip.toList());
     }
     
     @Test
