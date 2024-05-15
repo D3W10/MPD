@@ -21,7 +21,9 @@ public class StreamUtils {
                 cachedValues.stream(),
                 StreamSupport.stream(
                         Spliterators.spliteratorUnknownSize(
-                                new Iterator<T>() {
+                                new Iterator<>() {
+                                    private int count = 0;
+
                                     @Override
                                     public boolean hasNext() {
                                         return srcIterator.hasNext();
@@ -29,9 +31,12 @@ public class StreamUtils {
 
                                     @Override
                                     public T next() {
-                                        T next = srcIterator.next();
-                                        cachedValues.add(next);
-                                        return next;
+                                        if (cachedValues.size() <= count) {
+                                            T next = srcIterator.next();
+                                            cachedValues.add(next);
+                                        }
+
+                                        return cachedValues.get(count++);
                                     }
                                 },
                                 Spliterator.ORDERED
