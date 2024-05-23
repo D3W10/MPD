@@ -111,12 +111,16 @@ public class LastfmWebApi {
         // TO COMPLETE
         return CompletableFuture.completedFuture(List.of());
     }
-    
-    
+
+
     public CompletableFuture<List<TrackDto>> getAlbumInfo(String albumMbid){
         String path = String.format(LASTFM_GET_ALBUM_INFO, albumMbid);
-        // TO COMPLETE
-        return CompletableFuture.completedFuture(List.of());
+
+        return request.getAsync(path).handleAsync((reader, error) -> {
+            GetAlbumDto album = gson.fromJson(reader, GetAlbumDto.class);
+
+            return album.getAlbum().getTracks();
+        });
     }
     
     public CompletableFuture<ArtistDetailDto> getArtistInfo(String artistMbid) {
