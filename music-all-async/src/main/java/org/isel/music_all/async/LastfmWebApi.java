@@ -108,8 +108,12 @@ public class LastfmWebApi {
     
     public CompletableFuture<List<AlbumDto>> getAlbums(String artistMbid, int page) {
         String path = String.format(LASTFM_GET_ALBUMS, artistMbid, page);
-        // TO COMPLETE
-        return CompletableFuture.completedFuture(List.of());
+
+        return request.getAsync(path).handleAsync((reader, error) -> {
+            GetAlbumsDto albums = gson.fromJson(reader, GetAlbumsDto.class);
+
+            return albums.getAlbums().stream().filter(album -> album.getMbid() != null && !album.getMbid().isEmpty()).toList();
+        });
     }
 
 
