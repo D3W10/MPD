@@ -38,11 +38,14 @@ import org.isel.music_all.async.utils.requests.HttpAsyncRequest;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import static org.isel.music_all.async.utils.ListUtils.concat;
-import static org.junit.jupiter.api.Assertions.*;
-import java.util.*;
+
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
+
+import static org.isel.music_all.async.utils.ListUtils.concat;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MusicAllServiceTests {
     private static Logger logger =
@@ -101,7 +104,7 @@ public class MusicAllServiceTests {
         CompletableFuture<Stream<Artist>> artistsHiperFut =
             service.searchArtist("hiper", 6);
         CompletableFuture<Stream<Artist>> artistsDavidFut =
-            service.searchArtist("david", 100);
+            service.searchArtist("david", 101);
         
         assertEquals(6, artistsHiperFut.join().count());
         
