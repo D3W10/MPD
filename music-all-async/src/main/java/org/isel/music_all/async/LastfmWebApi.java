@@ -34,7 +34,9 @@ import com.google.gson.Gson;
 import org.isel.music_all.async.dto.*;
 import org.isel.music_all.async.utils.requests.AsyncRequest;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -97,7 +99,7 @@ public class LastfmWebApi {
     public CompletableFuture<List<ArtistDto>> searchArtist(String name, int page) {
         String path = String.format(LASTFM_SEARCH, name, page);
 
-        return request.getAsync(path).handleAsync((reader, error) -> {
+        return request.getAsync(path).thenApply(reader -> {
             SearchArtistDto searchResult = gson.fromJson(reader, SearchArtistDto.class);
 
             return searchResult.getResults().getArtistMatches().stream().filter(artistDto -> artistDto.getMbid() != null && !artistDto.getMbid().isEmpty()).toList();
@@ -107,7 +109,7 @@ public class LastfmWebApi {
     public CompletableFuture<List<AlbumDto>> getAlbums(String artistMbid, int page) {
         String path = String.format(LASTFM_GET_ALBUMS, artistMbid, page);
 
-        return request.getAsync(path).handleAsync((reader, error) -> {
+        return request.getAsync(path).thenApply(reader -> {
             GetAlbumsDto albums = gson.fromJson(reader, GetAlbumsDto.class);
 
             return albums.getAlbums().stream().filter(album -> album.getMbid() != null && !album.getMbid().isEmpty()).toList();
@@ -118,7 +120,7 @@ public class LastfmWebApi {
     public CompletableFuture<List<TrackDto>> getAlbumInfo(String albumMbid){
         String path = String.format(LASTFM_GET_ALBUM_INFO, albumMbid);
 
-        return request.getAsync(path).handleAsync((reader, error) -> {
+        return request.getAsync(path).thenApply(reader -> {
             GetAlbumDto album = gson.fromJson(reader, GetAlbumDto.class);
 
             return album.getAlbum().getTracks();
@@ -128,7 +130,7 @@ public class LastfmWebApi {
     public CompletableFuture<ArtistDetailDto> getArtistInfo(String artistMbid) {
         String path = String.format(LASTFM_ARTIST_INFO, artistMbid);
 
-        return request.getAsync(path).handleAsync((reader, error) -> {
+        return request.getAsync(path).thenApply(reader -> {
             ArtistDetailQueryDto result =
                     gson.fromJson(reader, ArtistDetailQueryDto.class);
             return result.getInfo();
