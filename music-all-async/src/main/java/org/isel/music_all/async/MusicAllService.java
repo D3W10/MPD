@@ -31,8 +31,13 @@ public class MusicAllService {
     
     
     public CompletableFuture<List<Artist>> searchArtistPar(String name, int page1) {
-        // TO IMPLEMENT
-        return CompletableFuture.completedFuture(List.of());
+        CompletableFuture<List<Artist>> artistList1 = api.searchArtist(name, page1).thenApply(artistDtos -> artistDtos.stream().map(this::dtoToArtist).toList());
+        CompletableFuture<List<Artist>> artistList2 = api.searchArtist(name, page1 + 1).thenApply(artistDtos -> artistDtos.stream().map(this::dtoToArtist).toList());
+
+        return artistList1.thenCombine(artistList2, (s1, s2) -> {
+            s1.addAll(s2);
+            return s1;
+        });
     }
     
     public CompletableFuture<Stream<Artist>>
