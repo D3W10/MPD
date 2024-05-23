@@ -1,19 +1,18 @@
 
 package org.isel.music_all.async;
 
-import org.isel.music_all.async.dto.*;
-import org.isel.music_all.async.model.*;
+import org.isel.music_all.async.dto.AlbumDto;
+import org.isel.music_all.async.dto.ArtistDto;
+import org.isel.music_all.async.dto.TrackDto;
+import org.isel.music_all.async.model.Album;
+import org.isel.music_all.async.model.Artist;
+import org.isel.music_all.async.model.ArtistDetail;
+import org.isel.music_all.async.model.Track;
 import org.isel.music_all.async.utils.requests.HttpAsyncRequest;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
-
-import static java.util.Comparator.comparing;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Stream.of;
-import static org.isel.music_all.async.utils.ListUtils.concat;
 
 
 public class MusicAllService {
@@ -38,6 +37,19 @@ public class MusicAllService {
             s1.addAll(s2);
             return s1;
         });
+    }
+
+    public CompletableFuture<List<Artist>> searchArtistPar(String name, int page1, int numPages) {
+        CompletableFuture<List<Artist>> artistList1 = api.searchArtist(name, page1).thenApply(artistDtos -> artistDtos.stream().map(this::dtoToArtist).toList());
+
+        for (int i = 1; i <= numPages - 1; i++) {
+            artistList1.thenCombine(api.searchArtist(name, page1 + i).thenApply(artistDtos -> artistDtos.stream().map(this::dtoToArtist).toList()), (s1, s2) -> {
+                s1.addAll(s2);
+                return s1;
+            });
+        }
+
+        return artistList1;
     }
     
     public CompletableFuture<Stream<Artist>>
