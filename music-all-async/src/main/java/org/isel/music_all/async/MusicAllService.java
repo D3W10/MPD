@@ -59,8 +59,13 @@ public class MusicAllService {
     }
     
     public CompletableFuture<List<Album>> getAlbumsPar(String name, int page1) {
-        // TO IMPLEMENT
-        return CompletableFuture.completedFuture(List.of());
+        CompletableFuture<List<Album>> future1 = api.getAlbums(name, page1).thenApply(album -> album.stream().map(this::dtoToAlbum).toList());
+        CompletableFuture<List<Album>> future2 = api.getAlbums(name, page1 + 1).thenApply(albumDtos -> albumDtos.stream().map(this::dtoToAlbum).toList());
+
+        return future1.thenCombine(future2, (f1, f2) -> {
+            f1.addAll(f2);
+            return f1;
+        });
     }
     
     
