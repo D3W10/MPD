@@ -74,20 +74,25 @@ public class MusicAllService {
        // TO IMPLEMENT
         return CompletableFuture.completedFuture(Stream.empty());
     }
-    
-    
+
+
     private CompletableFuture<Stream<Track>> getAlbumTracks(String albumMbid) {
-        // TO IMPLEMENT
-        return CompletableFuture.completedFuture(Stream.empty());
+        return api.getAlbumInfo(albumMbid)
+                .thenApply(trackDtos -> trackDtos.stream().map(this::dtoToTrack));
     }
-    
-    
+
+
     public CompletableFuture<ArtistDetail> getArtistDetail(String artistMbid) {
-        // TO IMPLEMENT
-        return CompletableFuture.completedFuture(new ArtistDetail());
+        return api.getArtistInfo(artistMbid)
+                .thenApply(artistDetailDto -> new ArtistDetail(
+                        artistDetailDto.getSimilarArtists().stream().map(ArtistDto::getName).toList(),
+                        artistDetailDto.getGenres(),
+                        artistDetailDto.getBio()
+                ));
     }
-    
-    
+
+
+
     private Artist dtoToArtist(ArtistDto dto) {
         return new Artist(
             dto.getName(),
