@@ -32,6 +32,7 @@ package org.isel.music_all.async;
 
 
 import org.isel.music_all.async.dto.AlbumDto;
+import org.isel.music_all.async.dto.ArtistDetailDto;
 import org.isel.music_all.async.dto.ArtistDto;
 import org.isel.music_all.async.dto.TrackDto;
 import org.isel.music_all.async.utils.requests.HttpAsyncRequest;
@@ -39,8 +40,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class LastfmWebApiTests {
@@ -78,5 +78,17 @@ public class LastfmWebApiTests {
         assertEquals("Starlight", track.getName());
 
     }
-    
+
+
+    @Test
+    public void getArtistInfoFromStingTest(){
+        LastfmWebApi api = new LastfmWebApi(new HttpAsyncRequest());
+        List<ArtistDto> artist = api.searchArtist("sting", 1).join();
+        assertFalse(artist.isEmpty(), "list must not be empty");
+        ArtistDto sting = artist.getFirst();
+        assertEquals("Sting", sting.getName());
+        ArtistDetailDto stingDetail = api.getArtistInfo(sting.getMbid()).join();
+        assertEquals("The Police",
+                stingDetail.getSimilarArtists().getFirst().getName() );
+    }
 }
