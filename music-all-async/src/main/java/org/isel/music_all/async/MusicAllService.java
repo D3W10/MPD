@@ -67,7 +67,19 @@ public class MusicAllService {
             return f1;
         });
     }
-    
+
+    public CompletableFuture<List<Album>> getAlbumsPar(String name, int page1, int numPages) {
+        CompletableFuture<List<Album>> albumList = api.getAlbums(name, page1).thenApply(album -> album.stream().map(this::dtoToAlbum).toList());
+
+        for (int i = 1; i <= numPages - 1; i++) {
+            albumList.thenCombine(api.getAlbums(name, page1 + 1).thenApply(album -> album.stream().map(this::dtoToAlbum).toList()), (s1, s2) -> {
+                s1.addAll(s2);
+                return s1;
+            });
+        };
+
+        return albumList;
+    }
     
     public CompletableFuture<Stream<Album>>
     getAlbums(String artistMbid, int max) {
