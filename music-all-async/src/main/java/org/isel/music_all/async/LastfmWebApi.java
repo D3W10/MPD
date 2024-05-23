@@ -34,9 +34,7 @@ import com.google.gson.Gson;
 import org.isel.music_all.async.dto.*;
 import org.isel.music_all.async.utils.requests.AsyncRequest;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.URL;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -129,8 +127,12 @@ public class LastfmWebApi {
     
     public CompletableFuture<ArtistDetailDto> getArtistInfo(String artistMbid) {
         String path = String.format(LASTFM_ARTIST_INFO, artistMbid);
-        // TO COMPLETE
-        return CompletableFuture.completedFuture(new ArtistDetailDto());
+
+        return request.getAsync(path).handleAsync((reader, error) -> {
+            ArtistDetailQueryDto result =
+                    gson.fromJson(reader, ArtistDetailQueryDto.class);
+            return result.getInfo();
+        });
     }
     
 }
