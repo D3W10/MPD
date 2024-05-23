@@ -31,14 +31,12 @@
 package org.isel.music_all.async;
 
 import com.google.gson.Gson;
-
 import org.isel.music_all.async.dto.*;
 import org.isel.music_all.async.utils.requests.AsyncRequest;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.UncheckedIOException;
 import java.net.URL;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -100,8 +98,12 @@ public class LastfmWebApi {
     
     public CompletableFuture<List<ArtistDto>> searchArtist(String name, int page) {
         String path = String.format(LASTFM_SEARCH, name, page);
-        // TO COMPLETE
-        return CompletableFuture.completedFuture(List.of());
+
+        return request.getAsync(path).handleAsync((reader, error) -> {
+            SearchArtistDto searchResult = gson.fromJson(reader, SearchArtistDto.class);
+
+            return searchResult.getResults().getArtistMatches().stream().filter(artistDto -> artistDto.getMbid() != null && !artistDto.getMbid().isEmpty()).toList();
+        });
     }
     
     public CompletableFuture<List<AlbumDto>> getAlbums(String artistMbid, int page) {
