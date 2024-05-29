@@ -182,7 +182,14 @@ public class MusicAllServiceTests {
         assertTrue((endTime-startTime) < 6000);
         logger.info("end getAllAlbumsFromMuse");
     }
-    
+
+    @Test
+    public void a(){
+        CountAsyncRequest countRequest = new CountAsyncRequest(new HttpAsyncRequest());
+        MusicAllService service = new MusicAllService(new LastfmWebApi(countRequest));
+        //service.getAlbums()
+    }
+
     private CompletableFuture<Artist> getArtist(MusicAllService service, String artistName) {
         var searchArtistName = artistName.replace(' ', '+');
         return service.searchArtist(searchArtistName, 10)

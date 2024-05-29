@@ -10,8 +10,10 @@ import org.isel.music_all.async.model.ArtistDetail;
 import org.isel.music_all.async.model.Track;
 import org.isel.music_all.async.utils.requests.HttpAsyncRequest;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 
@@ -52,10 +54,23 @@ public class MusicAllService {
         return artistList1;
     }
     
-    public CompletableFuture<Stream<Artist>>
-    searchArtist(String name, int max) {
-        // TO IMPLEMENT
-        return CompletableFuture.completedFuture(Stream.empty());
+    public CompletableFuture<Stream<Artist>> searchArtist(String name, int max) {
+        final int[] cnt = {0};
+        CompletableFuture<List<Artist>> artistStream = CompletableFuture.completedFuture(List.of());
+
+        for (int i = 1; cnt[0] < max; i++) {
+            CompletableFuture<List<Artist>> artists = searchArtistPar(name, i);
+
+            artistStream.thenCombine(artists, (f1, f2)->{
+                for (Artist artist : f2) {
+                    f1.add(artist);
+                    cnt[0]++;
+                }
+                return f1;
+            });
+        }
+
+        return artistStream.thenApply(Collection::stream);
     }
     
     public CompletableFuture<List<Album>> getAlbumsPar(String name, int page1) {
@@ -81,10 +96,23 @@ public class MusicAllService {
         return albumList;
     }
     
-    public CompletableFuture<Stream<Album>>
-    getAlbums(String artistMbid, int max) {
-       // TO IMPLEMENT
-        return CompletableFuture.completedFuture(Stream.empty());
+    public CompletableFuture<Stream<Album>> getAlbums(String artistMbid, int max) {
+        final int[] cnt = {0};
+        CompletableFuture<List<Album>> albumStream = CompletableFuture.completedFuture(List.of());
+
+        for (int i = 1; cnt[0] < max; i++) {
+            CompletableFuture<List<Album>> albums = getAlbumsPar(artistMbid, i);
+
+            albumStream.thenCombine(albums, (f1, f2)->{
+                for (Album album : f2) {
+                    f1.add(album);
+                    cnt[0]++;
+                }
+                return f1;
+            });
+        }
+
+        return albumStream.thenApply(Collection::stream);
     }
 
 
