@@ -40,20 +40,24 @@ public class Artist {
     final String mbid;
     final String url;
     final String image;
-
+    final Supplier<CompletableFuture<Stream<Album>>> albumsSup;
+    final Supplier<CompletableFuture<ArtistDetail>> detailSup;
     
     public Artist(String name,
                   int listeners,
                   String mbid,
                   String url,
-                  String image) {
+                  String image,
+                  Supplier<CompletableFuture<Stream<Album>>> albumsFuture,
+                  Supplier<CompletableFuture<ArtistDetail>> detailFuture) {
                
         this.name = name;
         this.listeners = listeners;
         this.mbid = mbid;
         this.url = url;
         this.image = image;
-    
+        this.albumsSup = albumsFuture;
+        this.detailSup = detailFuture;
     }
 
     public String getName() {
@@ -76,15 +80,11 @@ public class Artist {
         return image;
     }
 
-    public CompletableFuture<Stream<Album>>
-    getAlbums() {
-       // TO IMPLEMENT
-        return CompletableFuture.completedFuture(Stream.empty());
+    public CompletableFuture<Stream<Album>> getAlbums() {
+        return albumsSup.get();
     }
     
     public CompletableFuture<ArtistDetail> getDetail() {
-        // TO IMPLEMENT
-        return CompletableFuture.completedFuture(new ArtistDetail());
+        return detailSup.get();
     }
-
 }

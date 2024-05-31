@@ -40,14 +40,16 @@ public class Album {
     private final String mbid;
     private final String url;
     private final String image;
+    private final Supplier<CompletableFuture<Stream<Track>>> tracksSup;
     
     public Album(String name, int playcount, String mbid,
-                 String url, String image) {
+                 String url, String image, Supplier<CompletableFuture<Stream<Track>>> tracksFuture) {
         this.name = name;
         this.playcount = playcount;
         this.mbid = mbid;
         this.url = url;
         this.image = image;
+        this.tracksSup = tracksFuture;
     }
 
     public String getName() {
@@ -71,8 +73,7 @@ public class Album {
     }
 
     public CompletableFuture<Stream<Track>> getTracks() {
-        // TO IMPLEMENT
-        return CompletableFuture.completedFuture(Stream.empty());
+        return tracksSup.get();
     }
 
     @Override

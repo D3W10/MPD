@@ -10,15 +10,15 @@ import org.isel.music_all.async.model.ArtistDetail;
 import org.isel.music_all.async.model.Track;
 import org.isel.music_all.async.utils.requests.HttpAsyncRequest;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
 public class MusicAllService {
-    
     final LastfmWebApi api;
     
     public MusicAllService(LastfmWebApi api) {
@@ -26,14 +26,12 @@ public class MusicAllService {
     }
     
     public MusicAllService() {
-        
         this(new LastfmWebApi(new HttpAsyncRequest()));
     }
-    
-    
+
     public CompletableFuture<List<Artist>> searchArtistPar(String name, int page1) {
-        CompletableFuture<List<Artist>> artistList1 = api.searchArtist(name, page1).thenApply(artistDtos -> artistDtos.stream().map(this::dtoToArtist).toList());
-        CompletableFuture<List<Artist>> artistList2 = api.searchArtist(name, page1 + 1).thenApply(artistDtos -> artistDtos.stream().map(this::dtoToArtist).toList());
+        CompletableFuture<List<Artist>> artistList1 = api.searchArtist(name, page1).thenApply(artistDtos -> artistDtos.stream().map(this::dtoToArtist).collect(Collectors.toList()));
+        CompletableFuture<List<Artist>> artistList2 = api.searchArtist(name, page1 + 1).thenApply(artistDtos -> artistDtos.stream().map(this::dtoToArtist).collect(Collectors.toList()));
 
         return artistList1.thenCombine(artistList2, (s1, s2) -> {
             s1.addAll(s2);
@@ -42,10 +40,10 @@ public class MusicAllService {
     }
 
     public CompletableFuture<List<Artist>> searchArtistPar(String name, int page1, int numPages) {
-        CompletableFuture<List<Artist>> artistList1 = api.searchArtist(name, page1).thenApply(artistDtos -> artistDtos.stream().map(this::dtoToArtist).toList());
+        CompletableFuture<List<Artist>> artistList1 = api.searchArtist(name, page1).thenApply(artistDtos -> artistDtos.stream().map(this::dtoToArtist).collect(Collectors.toList()));
 
         for (int i = 1; i <= numPages - 1; i++) {
-            artistList1.thenCombine(api.searchArtist(name, page1 + i).thenApply(artistDtos -> artistDtos.stream().map(this::dtoToArtist).toList()), (s1, s2) -> {
+            artistList1.thenCombine(api.searchArtist(name, page1 + i).thenApply(artistDtos -> artistDtos.stream().map(this::dtoToArtist).collect(Collectors.toList())), (s1, s2) -> {
                 s1.addAll(s2);
                 return s1;
             });
@@ -53,29 +51,29 @@ public class MusicAllService {
 
         return artistList1;
     }
+
+    private CompletableFuture<Stream<Artist>> searchArtistAux(String name, int max, Stream<Artist> acc, int page) {
+        if (max <= 0)
+            return CompletableFuture.completedFuture(acc);
+
+        return searchArtistPar(name, page)
+                .thenCompose(artists -> {
+                    int remaining = max - artists.size();
+
+                    if (remaining <= 0 || artists.isEmpty())
+                        return CompletableFuture.completedFuture(Stream.concat(acc, artists.stream()).limit(max));
+                    else
+                        return searchArtistAux(name, remaining, Stream.concat(acc, artists.stream()), page + 2);
+                });
+    }
     
     public CompletableFuture<Stream<Artist>> searchArtist(String name, int max) {
-        final int[] cnt = {0};
-        CompletableFuture<List<Artist>> artistStream = CompletableFuture.completedFuture(List.of());
-
-        for (int i = 1; cnt[0] < max; i++) {
-            CompletableFuture<List<Artist>> artists = searchArtistPar(name, i);
-
-            artistStream.thenCombine(artists, (f1, f2)->{
-                for (Artist artist : f2) {
-                    f1.add(artist);
-                    cnt[0]++;
-                }
-                return f1;
-            });
-        }
-
-        return artistStream.thenApply(Collection::stream);
+        return searchArtistAux(name, max, Stream.empty(), 1);
     }
     
     public CompletableFuture<List<Album>> getAlbumsPar(String name, int page1) {
-        CompletableFuture<List<Album>> future1 = api.getAlbums(name, page1).thenApply(album -> album.stream().map(this::dtoToAlbum).toList());
-        CompletableFuture<List<Album>> future2 = api.getAlbums(name, page1 + 1).thenApply(albumDtos -> albumDtos.stream().map(this::dtoToAlbum).toList());
+        CompletableFuture<List<Album>> future1 = api.getAlbums(name, page1).thenApply(album -> album.stream().map(this::dtoToAlbum).collect(Collectors.toList()));
+        CompletableFuture<List<Album>> future2 = api.getAlbums(name, page1 + 1).thenApply(albumDtos -> albumDtos.stream().map(this::dtoToAlbum).collect(Collectors.toList()));
 
         return future1.thenCombine(future2, (f1, f2) -> {
             f1.addAll(f2);
@@ -84,10 +82,10 @@ public class MusicAllService {
     }
 
     public CompletableFuture<List<Album>> getAlbumsPar(String name, int page1, int numPages) {
-        CompletableFuture<List<Album>> albumList = api.getAlbums(name, page1).thenApply(album -> album.stream().map(this::dtoToAlbum).toList());
+        CompletableFuture<List<Album>> albumList = api.getAlbums(name, page1).thenApply(album -> album.stream().map(this::dtoToAlbum).collect(Collectors.toList()));
 
         for (int i = 1; i <= numPages - 1; i++) {
-            albumList.thenCombine(api.getAlbums(name, page1 + 1).thenApply(album -> album.stream().map(this::dtoToAlbum).toList()), (s1, s2) -> {
+            albumList.thenCombine(api.getAlbums(name, page1 + 1).thenApply(album -> album.stream().map(this::dtoToAlbum).collect(Collectors.toList())), (s1, s2) -> {
                 s1.addAll(s2);
                 return s1;
             });
@@ -95,32 +93,30 @@ public class MusicAllService {
 
         return albumList;
     }
+
+    private CompletableFuture<List<Album>> getAlbumsAux(String name, int max, List<Album> acc, int page) {
+        if (max <= 0)
+            return CompletableFuture.completedFuture(acc);
+
+        return getAlbumsPar(name, page)
+                .thenCompose(albums -> {
+                    int remaining = max - albums.size();
+
+                    if (remaining <= 0 || albums.isEmpty())
+                        return CompletableFuture.completedFuture(Stream.concat(acc.stream(), albums.stream()).limit(max).collect(Collectors.toList()));
+                    else
+                        return getAlbumsAux(name, remaining, Stream.concat(acc.stream(), albums.stream()).collect(Collectors.toList()), page + 2);
+                });
+    }
     
     public CompletableFuture<Stream<Album>> getAlbums(String artistMbid, int max) {
-        final int[] cnt = {0};
-        CompletableFuture<List<Album>> albumStream = CompletableFuture.completedFuture(List.of());
-
-        for (int i = 1; cnt[0] < max; i++) {
-            CompletableFuture<List<Album>> albums = getAlbumsPar(artistMbid, i);
-
-            albumStream.thenCombine(albums, (f1, f2)->{
-                for (Album album : f2) {
-                    f1.add(album);
-                    cnt[0]++;
-                }
-                return f1;
-            });
-        }
-
-        return albumStream.thenApply(Collection::stream);
+        return getAlbumsAux(artistMbid, max, new ArrayList<>(), 1).thenApply(Collection::stream);
     }
 
-
-    private CompletableFuture<Stream<Track>> getAlbumTracks(String albumMbid) {
+    public CompletableFuture<Stream<Track>> getAlbumTracks(String albumMbid) {
         return api.getAlbumInfo(albumMbid)
                 .thenApply(trackDtos -> trackDtos.stream().map(this::dtoToTrack));
     }
-
 
     public CompletableFuture<ArtistDetail> getArtistDetail(String artistMbid) {
         return api.getArtistInfo(artistMbid)
@@ -131,25 +127,26 @@ public class MusicAllService {
                 ));
     }
 
-
-
     private Artist dtoToArtist(ArtistDto dto) {
         return new Artist(
-            dto.getName(),
-            dto.getListeners(),
-            dto.getMbid(),
-            dto.getUrl(),
-            dto.getImage()[0].getImageUrl()
+                dto.getName(),
+                dto.getListeners(),
+                dto.getMbid(),
+                dto.getUrl(),
+                dto.getImage()[0].getImageUrl(),
+                () -> getAlbums(dto.getMbid(), Integer.MAX_VALUE),
+                () -> getArtistDetail(dto.getMbid())
         );
     }
     
     private Album dtoToAlbum(AlbumDto dto) {
         return new Album(
-            dto.getName(),
-            dto.getPlaycount(),
-            dto.getMbid(),
-            dto.getUrl(),
-            dto.getImage()[0].getImageUrl()
+                dto.getName(),
+                dto.getPlaycount(),
+                dto.getMbid(),
+                dto.getUrl(),
+                dto.getImage()[0].getImageUrl(),
+                () -> getAlbumTracks(dto.getMbid())
         );
     }
     
