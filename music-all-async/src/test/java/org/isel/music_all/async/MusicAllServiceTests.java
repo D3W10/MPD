@@ -109,7 +109,7 @@ public class MusicAllServiceTests {
         assertEquals(6, artistsHiperFut.join().count());
         
         Artist last = lastOf(artistsDavidFut.join()).get();
-        assertEquals("David Gravell", last.getName());
+        assertEquals("Craig David", last.getName());
         assertEquals(8, countRequest.getCount());
         var endTime = System.currentTimeMillis();
         assertTrue((endTime - startTime) < 1500);
@@ -181,13 +181,6 @@ public class MusicAllServiceTests {
         long endTime = System.currentTimeMillis();
         assertTrue((endTime-startTime) < 6000);
         logger.info("end getAllAlbumsFromMuse");
-    }
-
-    @Test
-    public void a(){
-        CountAsyncRequest countRequest = new CountAsyncRequest(new HttpAsyncRequest());
-        MusicAllService service = new MusicAllService(new LastfmWebApi(countRequest));
-        //service.getAlbums()
     }
 
     private CompletableFuture<Artist> getArtist(MusicAllService service, String artistName) {
