@@ -1,4 +1,3 @@
-
 package org.isel.music_all.async;
 
 import org.isel.music_all.async.dto.AlbumDto;
@@ -17,7 +16,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-
 public class MusicAllService {
     final LastfmWebApi api;
     
@@ -30,6 +28,9 @@ public class MusicAllService {
     }
 
     public CompletableFuture<List<Artist>> searchArtistPar(String name, int page1) {
+        if (name == null)
+            throw new NullPointerException("Name cannot be null");
+
         CompletableFuture<List<Artist>> artistList1 = api.searchArtist(name, page1).thenApply(artistDtos -> artistDtos.stream().map(this::dtoToArtist).collect(Collectors.toList()));
         CompletableFuture<List<Artist>> artistList2 = api.searchArtist(name, page1 + 1).thenApply(artistDtos -> artistDtos.stream().map(this::dtoToArtist).collect(Collectors.toList()));
 
@@ -40,6 +41,9 @@ public class MusicAllService {
     }
 
     public CompletableFuture<List<Artist>> searchArtistPar(String name, int page1, int numPages) {
+        if (name == null)
+            throw new NullPointerException("Name cannot be null");
+
         CompletableFuture<List<Artist>> artistList1 = api.searchArtist(name, page1).thenApply(artistDtos -> artistDtos.stream().map(this::dtoToArtist).collect(Collectors.toList()));
 
         for (int i = 1; i <= numPages - 1; i++) {
@@ -68,10 +72,16 @@ public class MusicAllService {
     }
     
     public CompletableFuture<Stream<Artist>> searchArtist(String name, int max) {
+        if (name == null)
+            throw new NullPointerException("Name cannot be null");
+
         return searchArtistAux(name, max, Stream.empty(), 1);
     }
     
     public CompletableFuture<List<Album>> getAlbumsPar(String name, int page1) {
+        if (name == null)
+            throw new NullPointerException("Name cannot be null");
+
         CompletableFuture<List<Album>> future1 = api.getAlbums(name, page1).thenApply(album -> album.stream().map(this::dtoToAlbum).collect(Collectors.toList()));
         CompletableFuture<List<Album>> future2 = api.getAlbums(name, page1 + 1).thenApply(albumDtos -> albumDtos.stream().map(this::dtoToAlbum).collect(Collectors.toList()));
 
@@ -82,6 +92,9 @@ public class MusicAllService {
     }
 
     public CompletableFuture<List<Album>> getAlbumsPar(String name, int page1, int numPages) {
+        if (name == null)
+            throw new NullPointerException("Name cannot be null");
+
         CompletableFuture<List<Album>> albumList = api.getAlbums(name, page1).thenApply(album -> album.stream().map(this::dtoToAlbum).collect(Collectors.toList()));
 
         for (int i = 1; i <= numPages - 1; i++) {
@@ -110,10 +123,16 @@ public class MusicAllService {
     }
     
     public CompletableFuture<Stream<Album>> getAlbums(String artistMbid, int max) {
+        if (artistMbid == null)
+            throw new NullPointerException("Artist Mbid cannot be null");
+
         return getAlbumsAux(artistMbid, max, new ArrayList<>(), 1).thenApply(Collection::stream);
     }
 
     public CompletableFuture<Stream<Track>> getAlbumTracks(String albumMbid) {
+        if (albumMbid == null)
+            throw new NullPointerException("Album Mbid cannot be null");
+
         return api.getAlbumInfo(albumMbid)
                 .thenApply(trackDtos -> trackDtos.stream().map(this::dtoToTrack));
     }

@@ -37,10 +37,12 @@ import org.isel.music_all.async.utils.requests.AsyncRequest;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.StringWriter;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-
+import java.util.function.Supplier;
 
 public class LastfmWebApi {
     
@@ -102,6 +104,9 @@ public class LastfmWebApi {
         return request.getAsync(path).thenApply(reader -> {
             SearchArtistDto searchResult = gson.fromJson(reader, SearchArtistDto.class);
 
+            if (searchResult.getResults() == null)
+                return List.of();
+
             return searchResult.getResults().getArtistMatches().stream().filter(artistDto -> artistDto.getMbid() != null && !artistDto.getMbid().isEmpty()).toList();
         });
     }
@@ -111,6 +116,9 @@ public class LastfmWebApi {
 
         return request.getAsync(path).thenApply(reader -> {
             GetAlbumsDto albums = gson.fromJson(reader, GetAlbumsDto.class);
+
+            if (albums.getAlbums() == null)
+                return List.of();
 
             return albums.getAlbums().stream().filter(album -> album.getMbid() != null && !album.getMbid().isEmpty()).toList();
         });
@@ -123,6 +131,9 @@ public class LastfmWebApi {
         return request.getAsync(path).thenApply(reader -> {
             GetAlbumDto album = gson.fromJson(reader, GetAlbumDto.class);
 
+            if (album.getAlbum() == null)
+                return List.of();
+
             return album.getAlbum().getTracks();
         });
     }
@@ -131,10 +142,9 @@ public class LastfmWebApi {
         String path = String.format(LASTFM_ARTIST_INFO, artistMbid);
 
         return request.getAsync(path).thenApply(reader -> {
-            ArtistDetailQueryDto result =
-                    gson.fromJson(reader, ArtistDetailQueryDto.class);
+            ArtistDetailQueryDto result = gson.fromJson(reader, ArtistDetailQueryDto.class);
+
             return result.getInfo();
         });
     }
-    
 }

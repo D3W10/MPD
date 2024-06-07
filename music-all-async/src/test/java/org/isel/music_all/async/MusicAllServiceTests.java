@@ -32,6 +32,7 @@ package org.isel.music_all.async;
 
 import org.isel.music_all.async.model.Album;
 import org.isel.music_all.async.model.Artist;
+import org.isel.music_all.async.model.ArtistDetail;
 import org.isel.music_all.async.model.Track;
 import org.isel.music_all.async.utils.requests.CountAsyncRequest;
 import org.isel.music_all.async.utils.requests.HttpAsyncRequest;
@@ -55,10 +56,68 @@ public class MusicAllServiceTests {
     private <T> Optional<T> lastOf(Stream<T> stream) {
         return stream.reduce((a,b) -> b);
     }
-    
+
+    @Test
+    public void testSearchArtistPar() {
+        CountAsyncRequest countRequest = new CountAsyncRequest(new HttpAsyncRequest());
+        MusicAllService service = new MusicAllService(new LastfmWebApi(countRequest));
+
+        List<Artist> list = service.searchArtistPar("David", -2).join();
+        assertEquals(2, countRequest.getCount());
+        assertEquals(0, list.size());
+
+        assertThrows(NullPointerException.class, () -> service.searchArtistPar(null, 2).join());
+        assertEquals(2, countRequest.getCount());
+    }
+
+    @Test
+    public void testGetAlbumsPar() {
+        CountAsyncRequest countRequest = new CountAsyncRequest(new HttpAsyncRequest());
+        MusicAllService service = new MusicAllService(new LastfmWebApi(countRequest));
+
+        List<Album> list = service.getAlbumsPar("53b106e7-0cc6-42cc-ac95-ed8d30a3a98e", 0).join();
+        assertEquals(2, countRequest.getCount());
+        assertEquals(18, list.size());
+
+        list = service.getAlbumsPar("53b106e7-0cc6-42cc-ac95-ed8d30a3a98e", -2).join();
+        assertEquals(4, countRequest.getCount());
+        assertEquals(18, list.size());
+
+        assertThrows(NullPointerException.class, () -> service.getAlbumsPar(null, 2).join());
+        assertEquals(4, countRequest.getCount());
+    }
+
+    @Test
+    public void testGetAlbumTracks() {
+        CountAsyncRequest countRequest = new CountAsyncRequest(new HttpAsyncRequest());
+        MusicAllService service = new MusicAllService(new LastfmWebApi(countRequest));
+
+        List<Track> list = service.getAlbumTracks("6645381a-885f-4dae-808c-b8111bba3c08").join().toList();
+        assertEquals(1, countRequest.getCount());
+        assertEquals(15, list.size());
+
+        list = service.getAlbumTracks("00000000-0000-0000-0000-000000000000").join().toList();
+        assertEquals(2, countRequest.getCount());
+        assertEquals(0, list.size());
+
+        assertThrows(NullPointerException.class, () -> service.getAlbumTracks(null).join());
+        assertEquals(2, countRequest.getCount());
+    }
+
+    @Test
+    public void testGetArtistDetail() {
+        CountAsyncRequest countRequest = new CountAsyncRequest(new HttpAsyncRequest());
+        MusicAllService service = new MusicAllService(new LastfmWebApi(countRequest));
+
+        ArtistDetail detail = service.getArtistDetail("53b106e7-0cc6-42cc-ac95-ed8d30a3a98e").join();
+        assertEquals(5, detail.getSimilarArtists().size());
+        assertEquals(5, detail.getGenres().size());
+        assertTrue(detail.getBioSummary().startsWith("There are at least five artists with this name"));
+        assertEquals(1, countRequest.getCount());
+    }
+
     @Test
     public void search_David_Bowie_and_count_albums() {
-        
         CountAsyncRequest countRequest = new CountAsyncRequest(new HttpAsyncRequest());
         MusicAllService service = new MusicAllService(new LastfmWebApi(countRequest));
         var artistName = "David Bowie";
